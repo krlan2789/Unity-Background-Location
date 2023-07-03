@@ -18,7 +18,7 @@ public class BackgroundService {
     private static AndroidJavaClass customClass;
     
     //  Replace with the library/package name to be used
-    private static readonly string PackageName = "package_name.script_name";
+    private static readonly string PackageName = "com.singularity_code.live_location.LiveLocationService";
     //  Default Unity Java class
     private static readonly string UnityDefaultJavaClassName = "com.unity3d.player.UnityPlayer";
     //  Method name to send UnityActivity instance to library/package
@@ -29,6 +29,10 @@ public class BackgroundService {
     private static readonly string CustomClassStopServiceMethod = "StopService";
     //  Method name to get location value
     private static readonly string CustomClassGetLocationMethod = "GetLocation";
+
+    public static void CreateService() {
+
+    }
 
     public static void SendActivityReference()
     {
