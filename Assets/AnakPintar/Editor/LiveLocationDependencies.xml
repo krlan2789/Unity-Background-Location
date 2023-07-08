@@ -1,0 +1,22 @@
+<dependencies>
+  <androidPackages>
+    <!--<androidPackage spec="com.google.android.gms:play-services-location:21.0.1"></androidPackage>
+    <androidPackage spec="com.google.android.gms:play-services-maps:18.1.0"></androidPackage>
+    <androidPackage spec="com.squareup.retrofit2:retrofit:2.9.0"></androidPackage>
+    <androidPackage spec="com.squareup.retrofit2:converter-gson:2.9.0"></androidPackage>
+    <androidPackage spec="com.squareup.okhttp3:okhttp:4.10.0"></androidPackage>
+    <androidPackage spec="org.jetbrains.kotlin:kotlin-stdlib:1.8.22"></androidPackage>
+    <androidPackage spec="org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.0"></androidPackage>-->
+
+    
+    <androidPackage spec="com.google.android.gms:play-services-location:21.0.1"></androidPackage>
+    <androidPackage spec="com.google.android.gms:play-services-maps:18.1.0"></androidPackage>
+    <androidPackage spec="com.squareup.retrofit2:retrofit:2.9.0"></androidPackage>
+    <androidPackage spec="com.squareup.retrofit2:converter-gson:2.9.0"></androidPackage>
+    <androidPackage spec="com.squareup.okhttp3:okhttp:4.10.0"></androidPackage>
+    <androidPackage spec="org.jetbrains.kotlin:kotlin-stdlib:1.8.22"></androidPackage>
+    <androidPackage spec="org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.0"></androidPackage>
+    <androidPackage spec="io.arrow-kt:arrow-core-jvm:1.2.0-RC"></androidPackage>
+
+  </androidPackages>
+</dependencies>

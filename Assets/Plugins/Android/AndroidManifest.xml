@@ -17,6 +17,10 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+          <!--<intent-filter>
+            <action android:name="android.settings.LOCATION_SOURCE_SETTINGS" />
+            <category android:name="android.intent.category.DEFAULT" />
+          </intent-filter>-->
             <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
         </activity>
     </application>

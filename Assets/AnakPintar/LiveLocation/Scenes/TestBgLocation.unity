@@ -1912,6 +1912,52 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!1 &1190395085
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1190395087}
+  - component: {fileID: 1190395086}
+  m_Layer: 0
+  m_Name: LiveLocation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1190395086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1190395085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6794e48dbcd3d894196edeeee30024ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  apiUrl: wss://websocket.anakpintarstudio.com?id=sales1
+  networkMethod: 1
+--- !u!4 &1190395087
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1190395085}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 676.6701, y: 1002.0243, z: -8.142137}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1443473917
 GameObject:
   m_ObjectHideFlags: 0
@@ -2354,7 +2400,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncDateText: {fileID: 961658533}
   locationText: {fileID: 1805309980}
-  webSocketURL: 
+  webSocketURL: wss://websocket.anakpintarstudio.com?id=sales1
+  liveLocation: {fileID: 1190395086}
 --- !u!1 &1805309978
 GameObject:
   m_ObjectHideFlags: 0
