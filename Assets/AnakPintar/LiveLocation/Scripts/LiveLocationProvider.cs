@@ -189,7 +189,7 @@ namespace AnakPintar.LiveLocation {
             Debug.Log("Setup API url");
         }
 
-        public static void SetGPSSamplingRate(long samplingRate = 2000) {
+        public static void SetGPSSamplingRate(long samplingRate = 5000) {
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (alienPortalInstance == null) return;
             alienPortalInstance.Call("setGPSSamplingRate", samplingRate);

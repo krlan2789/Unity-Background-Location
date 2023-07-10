@@ -165,7 +165,7 @@ namespace AnakPintar.LiveLocation {
 
                 if (!IsUpdatingLocation) {
                     //  Call UpdateLocation method every second
-                    InvokeRepeating(nameof(UpdateLocation), .5f, 1f);
+                    InvokeRepeating(nameof(UpdateLocation), 2f, 1f);
                 }
             }
 #endif
