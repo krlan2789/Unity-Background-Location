@@ -1,2 +1,2 @@
-# unity-background-service
- Unity Android - Test Background location Plugin
+# Unity-Background-Location
+ Unity Android - Test background location Plugin
