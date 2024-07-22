@@ -1,0 +1,68 @@
+apply plugin: 'com.android.library'
+**APPLY_PLUGINS**
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+// Android Resolver Dependencies Start
+    implementation 'com.github.chuckerteam.chucker:library-no-op:4.0.0' // Assets/LAN/Editor/LiveLocationDependencies.xml:12
+    implementation 'com.google.android.gms:play-services-location:21.0.1' // Assets/LAN/Editor/LiveLocationDependencies.xml:4
+    implementation 'com.google.android.gms:play-services-maps:18.1.0' // Assets/LAN/Editor/LiveLocationDependencies.xml:5
+    implementation 'com.squareup.okhttp3:okhttp:4.10.0' // Assets/LAN/Editor/LiveLocationDependencies.xml:8
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0' // Assets/LAN/Editor/LiveLocationDependencies.xml:7
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0' // Assets/LAN/Editor/LiveLocationDependencies.xml:6
+    implementation 'io.arrow-kt:arrow-core-jvm:1.2.0-RC' // Assets/LAN/Editor/LiveLocationDependencies.xml:11
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22' // Assets/LAN/Editor/LiveLocationDependencies.xml:9
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.0' // Assets/LAN/Editor/LiveLocationDependencies.xml:10
+// Android Resolver Dependencies End
+**DEPS**}
+
+// Android Resolver Exclusions Start
+android {
+  packagingOptions {
+      exclude ('/lib/armeabi/*' + '*')
+      exclude ('/lib/mips/*' + '*')
+      exclude ('/lib/mips64/*' + '*')
+      exclude ('/lib/x86/*' + '*')
+      exclude ('/lib/x86_64/*' + '*')
+  }
+}
+// Android Resolver Exclusions End
+android {
+    ndkPath "**NDKPATH**"
+
+    compileSdkVersion **APIVERSION**
+    buildToolsVersion '**BUILDTOOLS**'
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    defaultConfig {
+        minSdkVersion **MINSDKVERSION**
+        targetSdkVersion **TARGETSDKVERSION**
+        ndk {
+            abiFilters **ABIFILTERS**
+        }
+        versionCode **VERSIONCODE**
+        versionName '**VERSIONNAME**'
+        consumerProguardFiles 'proguard-unity.txt'**USER_PROGUARD**
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    aaptOptions {
+        noCompress = **BUILTIN_NOCOMPRESS** + unityStreamingAssets.tokenize(', ')
+        ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~"
+    }**PACKAGING_OPTIONS**
+
+    packagingOptions {
+        pickFirst('META-INF/okio.kotlin_module')
+        pickFirst('META-INF/kotlinx_coroutines_core.version')
+    }
+}
+**IL_CPP_BUILD_SETUP**
+**SOURCE_BUILD_SETUP**
+**EXTERNAL_SOURCES**

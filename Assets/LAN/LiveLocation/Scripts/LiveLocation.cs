@@ -165,7 +165,7 @@ namespace LAN.LiveLocation {
 
                 if (!IsUpdatingLocation) {
                     //  Call UpdateLocation method every second
-                    InvokeRepeating(nameof(UpdateLocation), 2f, 1f);
+                    InvokeRepeating(nameof(UpdateLocation), 2f, 2f);
                 }
             }
 #endif
@@ -206,6 +206,7 @@ namespace LAN.LiveLocation {
             }
 #else
             if (HasPermission && Input.location.isEnabledByUser) {
+                Debug.Log($"{Input.location.status}::{JsonUtility.ToJson(Input.location.lastData)}");
                 //  Access granted and it has been initialized
                 Location location = new() {
                     latitude = Input.location.lastData.latitude,

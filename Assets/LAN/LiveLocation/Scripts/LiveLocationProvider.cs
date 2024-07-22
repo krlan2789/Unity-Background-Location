@@ -18,10 +18,19 @@ namespace LAN.LiveLocation {
 #if UNITY_ANDROID && !UNITY_EDITOR
         private static AndroidJavaClass unityClass;
         private static AndroidJavaObject unityActivity;
+
         private static AndroidJavaObject alienPortalInstance;
+        //private static AndroidJavaClass versionInfo;
 #endif
 
-        private static string[] requiredPermissions = new string[] { "android.permission.FOREGROUND_SERVICE", "android.permission.ACCESS_BACKGROUND_LOCATION", Permission.CoarseLocation, Permission.FineLocation, "android.permission.INTERNET" };
+        private static string[] requiredPermissions = new string[] {
+            "android.permission.FOREGROUND_SERVICE",
+            "android.permission.FOREGROUND_SERVICE_LOCATION",
+            "android.permission.ACCESS_BACKGROUND_LOCATION",
+            Permission.CoarseLocation,
+            Permission.FineLocation,
+            "android.permission.INTERNET"
+        };
 
         public static string[] RequiredPermissions {
             get {
@@ -33,6 +42,7 @@ namespace LAN.LiveLocation {
             get {
 #if UNITY_ANDROID && !UNITY_EDITOR
                 foreach (string perm in requiredPermissions) {
+                    if (AndroidSdkVersion >= 29 && perm == "android.permission.FOREGROUND_SERVICE_LOCATION") continue;
                     if (!Permission.HasUserAuthorizedPermission(perm)) return false;
                 }
 #endif
@@ -134,6 +144,19 @@ namespace LAN.LiveLocation {
             }
         }
 
+        public static int AndroidSdkVersion
+        {
+            get
+            {
+#if UNITY_ANDROID && !UNITY_EDITOR
+                var versionInfo = new AndroidJavaClass("android.os.Build$VERSION");
+                return versionInfo.GetStatic<int>("SDK_INT");
+#else
+                return 0;
+#endif
+            }
+        }
+
         /// <summary>
         /// Main setup to use this feature
         /// </summary>
@@ -143,6 +166,7 @@ namespace LAN.LiveLocation {
             unityActivity = unityClass.GetStatic<AndroidJavaObject>("currentActivity");
             AndroidJavaClass alienPortalClass = new("com.singularity_code.live_location.util.other.AlienPortal");
             alienPortalInstance = alienPortalClass.CallStatic<AndroidJavaObject>("newInstance");
+            //versionInfo = new AndroidJavaClass("android.os.Build$VERSION");
 
             SetContext();
             SetGPSSamplingRate();
