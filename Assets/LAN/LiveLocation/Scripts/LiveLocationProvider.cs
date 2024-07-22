@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using LAN.Android;
 using UnityEngine;
 using UnityEngine.Android;
 
@@ -16,11 +17,7 @@ namespace LAN.LiveLocation {
 
     public class LiveLocationProvider {
 #if UNITY_ANDROID && !UNITY_EDITOR
-        private static AndroidJavaClass unityClass;
-        private static AndroidJavaObject unityActivity;
-
         private static AndroidJavaObject alienPortalInstance;
-        //private static AndroidJavaClass versionInfo;
 #endif
 
         private static string[] requiredPermissions = new string[] {
@@ -162,11 +159,8 @@ namespace LAN.LiveLocation {
         /// </summary>
         public static void Setup() {
 #if UNITY_ANDROID && !UNITY_EDITOR
-            unityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-            unityActivity = unityClass.GetStatic<AndroidJavaObject>("currentActivity");
             AndroidJavaClass alienPortalClass = new("com.singularity_code.live_location.util.other.AlienPortal");
             alienPortalInstance = alienPortalClass.CallStatic<AndroidJavaObject>("newInstance");
-            //versionInfo = new AndroidJavaClass("android.os.Build$VERSION");
 
             SetContext();
             SetGPSSamplingRate();
@@ -223,7 +217,7 @@ namespace LAN.LiveLocation {
         public static void SetContext() {
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (alienPortalInstance == null) return;
-            alienPortalInstance.Call("setContext", unityActivity);
+            alienPortalInstance.Call("setContext", UnityActivityJavaClass.CurrentActivity);
 #endif
         }
 

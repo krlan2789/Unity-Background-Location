@@ -1,16 +1,18 @@
+using LAN.Android;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
 using UnityEngine.Android;
+using UnityEngine.Events;
 
 namespace LAN.LiveLocation {
     public class LiveLocation : MonoBehaviour {
         [SerializeField] protected string apiUrl = "wss://websocket.kuryana.id?token=user123456";
         [SerializeField] protected NetworkMethod networkMethod = NetworkMethod.WEBSOCKET;
 
-        public event Action<string, Location> OnLocationFound;
+        public event UnityAction<string, Location> OnLocationFound;
 
         protected static string MessageDecriptor { set; get; }
         protected static bool IsInitialized { set; get; }
@@ -79,8 +81,8 @@ namespace LAN.LiveLocation {
         }
 
         protected virtual IEnumerator RequestingPremission(Action<bool> callback) {
-#if UNITY_ANDROID && !UNITY_EDITOR
             Debug.Log("Requesting permissions!");
+#if UNITY_ANDROID && !UNITY_EDITOR
             Permission.RequestUserPermissions(LiveLocationProvider.RequiredPermissions);
 
             //  Initializing
@@ -99,25 +101,59 @@ namespace LAN.LiveLocation {
         /// <summary>
         /// Activating the device location service / GPS
         /// </summary>
-        public virtual LiveLocation ActivateGPS(Action<bool> callback = null) {
+        public virtual LiveLocation ActivateGPS(Action<bool> callback = null)
+        {
             Debug.Log("Activating GPS Services");
-            if (!Input.location.isEnabledByUser) {
+            if (!Input.location.isEnabledByUser)
+            {
+                OpenGPSSetting();
+            } else
+            {
+                Debug.Log("GPS Service is activated");
+                callback?.Invoke(true);
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Open Location Service Setting
+        /// </summary>
+        public void OpenGPSSetting()
+        {
 #if UNITY_ANDROID && !UNITY_EDITOR
                 try {
-                    using var unityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-                    using AndroidJavaObject currentActivityObject = unityClass.GetStatic<AndroidJavaObject>("currentActivity");
-                    using var intentObject = new AndroidJavaObject("android.content.Intent", "android.settings.LOCATION_SOURCE_SETTINGS");
-                    currentActivityObject.Call("startActivity", intentObject);
+                    UnityActivityJavaClass.CurrentActivity.Call("startActivity", UnityActivityJavaClass.CreateIntent(Settings.LOCATION_SOURCE_SETTINGS));
                 } catch (Exception e) {
                     Debug.LogError(e.Message);
                 }
 #else
-                Debug.LogWarning("GPS service disabled by user");
+            Debug.LogWarning("GPS service disabled by user");
 #endif
+        }
+
+        /// <summary>
+        /// Igonering battery optimization for long time use
+        /// </summary>
+        public virtual LiveLocation IgnoreBatteryOptimizations(Action<bool> callback = null)
+        {
+            Debug.Log("Activating GPS Services");
+#if UNITY_ANDROID && !UNITY_EDITOR
+            if (!BatteryOptimization.IsIgnoringBatteryOptimizations) {
+                Debug.LogWarning("Battery optimization enabled by user");
+
+                try {
+                    BatteryOptimization.OpenSetting();
+                } catch (Exception e) {
+                    Debug.LogError(e.Message);
+                }
             } else {
-                Debug.Log("GPS Service is activated");
+                Debug.Log("Battery optimization excluded by user");
                 callback?.Invoke(true);
             }
+#else
+            Debug.Log("Battery optimization excluded by user");
+            callback?.Invoke(true);
+#endif
             return this;
         }
 
@@ -153,6 +189,10 @@ namespace LAN.LiveLocation {
                 yield return new WaitForSecondsRealtime(1);
                 maxWait--;
             }
+
+            if (Application.platform == RuntimePlatform.Android) Debug.LogWarning("LiveLocationProvider.Status: " + LiveLocationProvider.Status);
+
+            Debug.LogWarning("Input.location.status: " + Input.location.status);
 
             //  Access denied
             if (maxWait < 1 || Input.location.status == LocationServiceStatus.Failed) {
@@ -200,9 +240,9 @@ namespace LAN.LiveLocation {
                 //TimeSpan duration = after.Subtract(searchDuration);
 
                 Debug.LogWarning(JsonUtility.ToJson(LastLocation));
-                onLocationFound?.Invoke(LiveLocationProvider.ErrorMessage, LastLocation);
+                OnLocationFound?.Invoke(LiveLocationProvider.ErrorMessage, LastLocation);
             } else {
-                onLocationFound?.Invoke("Failed to get access or permission location", Location.Default);
+                OnLocationFound?.Invoke("Failed to get access or permission location", Location.Default);
             }
 #else
             if (HasPermission && Input.location.isEnabledByUser) {
