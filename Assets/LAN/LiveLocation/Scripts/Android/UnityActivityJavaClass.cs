@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AnakPintar.Android {
+namespace LAN.Android {
     public struct Settings {
 #if UNITY_ANDROID && !UNITY_EDITOR
         public static readonly string IGNORE_BATTERY_OPTIMIZATION_SETTINGS = "android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS";

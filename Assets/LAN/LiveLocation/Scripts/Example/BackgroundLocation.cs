@@ -10,7 +10,7 @@ namespace LAN.LiveLocation.Example {
         [SerializeField] private LiveLocation liveLocation;
 
         private void Start() {
-            liveLocation.onLocationFound += UpdateLocation;
+            liveLocation.OnLocationFound += UpdateLocation;
             liveLocation.Setup(webSocketURL, "");
         }
 

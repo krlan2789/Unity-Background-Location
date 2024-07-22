@@ -1,10 +1,10 @@
-using AnakPintar.Android;
+using LAN.Android;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AnakPintar.LiveLocation {
+namespace LAN.LiveLocation {
     public static class BatteryOptimization {
         private static KeyValuePair<string, string>[] POWER_MANAGER_COMPONENTS_NAME = new KeyValuePair<string, string>[] {
             KeyValuePair.Create("com.samsung.android.lool", "com.samsung.android.sm.battery.ui.BatteryActivity"),

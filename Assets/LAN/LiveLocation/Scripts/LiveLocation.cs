@@ -10,7 +10,7 @@ namespace LAN.LiveLocation {
         [SerializeField] protected string apiUrl = "wss://websocket.kuryana.id?token=user123456";
         [SerializeField] protected NetworkMethod networkMethod = NetworkMethod.WEBSOCKET;
 
-        public event Action<string, Location> onLocationFound;
+        public event Action<string, Location> OnLocationFound;
 
         protected static string MessageDecriptor { set; get; }
         protected static bool IsInitialized { set; get; }
@@ -156,7 +156,7 @@ namespace LAN.LiveLocation {
 
             //  Access denied
             if (maxWait < 1 || Input.location.status == LocationServiceStatus.Failed) {
-                onLocationFound?.Invoke("Failed to get access or permission location", Location.Default);
+                OnLocationFound?.Invoke("Failed to get access or permission location", Location.Default);
                 yield break;
             } else {
                 //  Access Granted
@@ -175,7 +175,7 @@ namespace LAN.LiveLocation {
         /// Stop location services
         /// </summary>
         public virtual void StopService() {
-            onLocationFound = null;
+            OnLocationFound = null;
             IsRunning = false;
             CancelInvoke(nameof(UpdateLocation));
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -215,11 +215,11 @@ namespace LAN.LiveLocation {
                     updateTime = new DateTime((long)Input.location.lastData.timestamp)
                 };
 
-                onLocationFound?.Invoke(null, location);
+                OnLocationFound?.Invoke(null, location);
                 LastLocation = location;
             } else {
                 //  Service stopped
-                onLocationFound?.Invoke("Failed to get access or permission location", Location.Default);
+                OnLocationFound?.Invoke("Failed to get access or permission location", Location.Default);
             }
 #endif
         }
