@@ -3,15 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace LAN.Android {
-    public struct Settings {
+namespace LAN.Android
+{
+    public struct Settings
+    {
 #if UNITY_ANDROID && !UNITY_EDITOR
         public static readonly string IGNORE_BATTERY_OPTIMIZATION_SETTINGS = "android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS";
         public static readonly string APPLICATION_DETAILS_SETTINGS = "android.settings.APPLICATION_DETAILS_SETTINGS";
         public static readonly string LOCATION_SOURCE_SETTINGS = "android.settings.LOCATION_SOURCE_SETTINGS";
+        public static readonly string MANAGE_OVERLAY_PERMISSION = "android.settings.action.MANAGE_OVERLAY_PERMISSION";
 #endif
     }
-    public static class UnityActivityJavaClass {
+
+    public static class UnityActivityJavaClass
+    {
 #if UNITY_ANDROID && !UNITY_EDITOR
         public static readonly AndroidJavaClass URI_CLASS = new("android.net.Uri");
         public static readonly AndroidJavaClass VERSION_INFO_CLASS = new("android.os.Build$VERSION");
@@ -28,6 +33,9 @@ namespace LAN.Android {
         public static readonly string GET_SYSTEM_SERVICE_METHOD = "getSystemService";
         public static readonly string PACKAGE_MANAGER_MATCH_DEFAULT_ONLY_PROP = "MATCH_DEFAULT_ONLY";
 
+        public static readonly string CHECK_SELF_PERMISSION_METHOD = "checkSelfPermission";
+        public static readonly string REQUEST_PERMISSIONS_METHOD = "requestPermissions";
+
         private static AndroidJavaObject currentActivity = null;
         public static AndroidJavaObject CurrentActivity {
             get {
@@ -39,6 +47,13 @@ namespace LAN.Android {
         public static AndroidJavaObject ContentResolver {
             get {
                 return contentResolver ??= CurrentActivity.Call<AndroidJavaObject>("getContentResolver");
+            }
+        }
+
+        public static AndroidJavaObject UriPackageObject {
+            get {
+                AndroidJavaObject uri = URI_CLASS.CallStatic<AndroidJavaObject>("parse", "package:" + PackageName);
+                return uri;
             }
         }
 
@@ -57,7 +72,11 @@ namespace LAN.Android {
         }
 
         public static void StartActivity(AndroidJavaObject intent) {
-            CurrentActivity.Call(START_ACTIVITY_METHOD, intent);
+
+            if (Application.isFocused)
+            {
+                CurrentActivity.Call(START_ACTIVITY_METHOD, intent);
+            }
         }
 
         public static bool TryStartActivity(AndroidJavaObject intent) {
@@ -76,6 +95,48 @@ namespace LAN.Android {
 
         public static AndroidJavaObject GetPackageManager() {
             return CurrentActivity.Call<AndroidJavaObject>(GET_PACKAGE_MANAGER_METHOD);
+        }
+
+        public static bool HasPermission(string permission) {
+            return CurrentActivity.Call<int>(CHECK_SELF_PERMISSION_METHOD, permission) >= 0;
+        }
+
+        public static void RequestPermissions(string[] permissions) {
+
+            if (Application.isFocused)
+            {
+                CurrentActivity.Call(REQUEST_PERMISSIONS_METHOD, permissions, 201);
+            }
+        }
+
+        public static void OpenSetting()
+        {
+            AndroidJavaObject intent = CreateIntent(Settings.APPLICATION_DETAILS_SETTINGS);
+            intent.Call<AndroidJavaObject>("setData", UriPackageObject);
+            StartActivity(intent);
+        }
+
+        public static void OpenManageOverlay()
+        {
+            AndroidJavaObject intent = CreateIntent(Settings.MANAGE_OVERLAY_PERMISSION);
+            intent.Call<AndroidJavaObject>("setData", UriPackageObject);
+            StartActivity(intent);
+        }
+
+        /// <summary>
+        /// Open Location Service Setting
+        /// </summary>
+        public static void OpenGPSSetting()
+        {
+            try
+            {
+                StartActivity(CreateIntent(Settings.LOCATION_SOURCE_SETTINGS));
+            } catch (Exception e)
+            {
+                Debug.LogError(e.Message);
+            }
+
+            Debug.LogWarning("GPS service disabled by user");
         }
 #endif
     }

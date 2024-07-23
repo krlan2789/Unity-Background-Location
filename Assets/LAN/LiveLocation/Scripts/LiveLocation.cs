@@ -7,8 +7,10 @@ using UnityEngine;
 using UnityEngine.Android;
 using UnityEngine.Events;
 
-namespace LAN.LiveLocation {
-    public class LiveLocation : MonoBehaviour {
+namespace LAN.LiveLocation
+{
+    public class LiveLocation : MonoBehaviour
+    {
         [SerializeField] protected string apiUrl = "wss://websocket.kuryana.id?token=user123456";
         [SerializeField] protected NetworkMethod networkMethod = NetworkMethod.WEBSOCKET;
 
@@ -19,8 +21,10 @@ namespace LAN.LiveLocation {
         protected static bool IsUpdatingLocation { set; get; }
         public static Location LastLocation { protected set; get; }
         public static bool IsRunning { protected set; get; }
-        public static bool HasPermission {
-            get {
+        public static bool HasPermission
+        {
+            get
+            {
 #if UNITY_ANDROID && !UNITY_EDITOR
                 return LiveLocationProvider.HasPermission;
 #else
@@ -29,45 +33,58 @@ namespace LAN.LiveLocation {
             }
         }
 
-        protected virtual void Awake() {
+        protected virtual void Awake()
+        {
             MessageDecriptor = "";
             IsInitialized = false;
             IsUpdatingLocation = false;
             LastLocation = Location.Default;
             IsRunning = false;
+            StopService();
         }
 
-        public virtual LiveLocation SetNetworkMethod(NetworkMethod method) {
+        public virtual LiveLocation SetNetworkMethod(NetworkMethod method)
+        {
             networkMethod = method;
             return this;
         }
 
-        public virtual void Setup(string apiUrl, string messageDecriptor) {
+        public virtual void Setup(string apiUrl, string messageDecriptor)
+        {
             if (!string.IsNullOrEmpty(apiUrl)) this.apiUrl = apiUrl;
             if (!string.IsNullOrEmpty(messageDecriptor)) MessageDecriptor = messageDecriptor;
 
 #if UNITY_ANDROID && !UNITY_EDITOR
             void callback(bool status) {
                 if (!IsInitialized && status) {
-                    bool prevStatus = false;
-                    if (LiveLocationProvider.Status == LiveLocationStatus.RUNNING) {
-                        prevStatus = true;
-                        StopService();
+                    //bool prevStatus = false;
+                    if (LiveLocationProvider.Status != LiveLocationStatus.RUNNING) {
+                        //  Initialize Live Location
+                        Debug.Log("Setting up LiveLocationProvider");
+                        LiveLocationProvider.Setup();
+                        LiveLocationProvider.SetupURL(this.apiUrl, networkMethod);
+                        LiveLocationProvider.ClearHeader();
+                        LiveLocationProvider.AddHeader("Authentication", "encrypted_string_api_key");
+                        LiveLocationProvider.SetMessageDescriptor(MessageDecriptor);
+                        IsInitialized = true;
+                        //if (prevStatus) 
+                        StartService();
                     }
-
-                    //  Initialize Live Location
-                    Debug.Log("Setting up LiveLocationProvider");
-                    LiveLocationProvider.Setup();
-                    LiveLocationProvider.SetupURL(this.apiUrl, networkMethod);
-                    LiveLocationProvider.ClearHeader();
-                    LiveLocationProvider.AddHeader("Authentication", "encrypted_string_api_key");
-                    LiveLocationProvider.SetMessageDescriptor(MessageDecriptor);
-                    IsInitialized = true;
-                    if (prevStatus) StartService();
+                    else
+                    {
+                        //prevStatus = true;
+                        //StopService();
+                    }
                 }
-                Debug.LogWarning("LiveLocation is setted up!");
+                else
+                {
+                    if (LiveLocationProvider.Status != LiveLocationStatus.RUNNING) StopService();
+                }
+                
+                if (IsInitialized && status) Debug.LogWarning("LiveLocation is setted up!");
             }
 
+            BatteryOptimization.Setup();
             if (!HasPermission) RequestPermission(callback);
             else if (!Input.location.isEnabledByUser) ActivateGPS(callback);
             else callback(true);
@@ -76,14 +93,16 @@ namespace LAN.LiveLocation {
 #endif
         }
 
-        public virtual Coroutine RequestPermission(Action<bool> callback = null) {
+        public virtual Coroutine RequestPermission(Action<bool> callback = null)
+        {
             return StartCoroutine(RequestingPremission(callback));
         }
 
-        protected virtual IEnumerator RequestingPremission(Action<bool> callback) {
+        protected virtual IEnumerator RequestingPremission(Action<bool> callback)
+        {
             Debug.Log("Requesting permissions!");
 #if UNITY_ANDROID && !UNITY_EDITOR
-            Permission.RequestUserPermissions(LiveLocationProvider.RequiredPermissions);
+            LiveLocationProvider.RequestPermissions(LiveLocationProvider.RequiredPermissions);
 
             //  Initializing
             int maxWait = 20;
@@ -106,7 +125,9 @@ namespace LAN.LiveLocation {
             Debug.Log("Activating GPS Services");
             if (!Input.location.isEnabledByUser)
             {
-                OpenGPSSetting();
+#if UNITY_ANDROID && !UNITY_EDITOR
+                UnityActivityJavaClass.OpenGPSSetting();
+#endif
             } else
             {
                 Debug.Log("GPS Service is activated");
@@ -115,19 +136,10 @@ namespace LAN.LiveLocation {
             return this;
         }
 
-        /// <summary>
-        /// Open Location Service Setting
-        /// </summary>
-        public void OpenGPSSetting()
+        public virtual void OpenGPSSetting()
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
-                try {
-                    UnityActivityJavaClass.CurrentActivity.Call("startActivity", UnityActivityJavaClass.CreateIntent(Settings.LOCATION_SOURCE_SETTINGS));
-                } catch (Exception e) {
-                    Debug.LogError(e.Message);
-                }
-#else
-            Debug.LogWarning("GPS service disabled by user");
+            UnityActivityJavaClass.OpenGPSSetting();
 #endif
         }
 
@@ -157,16 +169,18 @@ namespace LAN.LiveLocation {
             return this;
         }
 
-        public virtual Coroutine StartService() {
+        public virtual Coroutine StartService()
+        {
             if (!IsInitialized) Setup(apiUrl, MessageDecriptor);
             return StartCoroutine(StartingService());
         }
 
-        protected virtual IEnumerator StartingService() {
+        protected virtual IEnumerator StartingService()
+        {
             //  Start service
             Debug.Log("Starting location services");
 #if UNITY_ANDROID && !UNITY_EDITOR
-            Debug.Log("LiveLocationProvider.Status: " + LiveLocationProvider.Status);
+            //Debug.Log("LiveLocationProvider.Status: " + LiveLocationProvider.Status);
             if (LiveLocationProvider.Status == LiveLocationStatus.RUNNING) {
                 Debug.LogWarning("LiveLocation service is already running");
             } else {
@@ -175,7 +189,7 @@ namespace LAN.LiveLocation {
 
                 if (!IsUpdatingLocation) {
                     //  Call UpdateLocation method every second
-                    InvokeRepeating(nameof(UpdateLocation), .5f, 1f);
+                    InvokeRepeating(nameof(UpdateLocation), .75f, 1f);
                 }
                 yield break;
             }
@@ -185,27 +199,31 @@ namespace LAN.LiveLocation {
 
             //  Initializing
             int maxWait = 20;
-            while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0) {
+            while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
+            {
                 yield return new WaitForSecondsRealtime(1);
                 maxWait--;
             }
 
-            if (Application.platform == RuntimePlatform.Android) Debug.LogWarning("LiveLocationProvider.Status: " + LiveLocationProvider.Status);
+            if (Application.platform == RuntimePlatform.Android) Debug.Log("LiveLocationProvider.Status: " + LiveLocationProvider.Status);
 
-            Debug.LogWarning("Input.location.status: " + Input.location.status);
+            Debug.Log("Input.location.status: " + Input.location.status);
 
             //  Access denied
-            if (maxWait < 1 || Input.location.status == LocationServiceStatus.Failed) {
+            if (maxWait < 1 || Input.location.status == LocationServiceStatus.Failed)
+            {
                 OnLocationFound?.Invoke("Failed to get access or permission location", Location.Default);
                 yield break;
-            } else {
+            } else
+            {
                 //  Access Granted
                 Debug.Log("Location.Status: " + Input.location.status);
                 IsRunning = true;
 
-                if (!IsUpdatingLocation) {
+                if (!IsUpdatingLocation)
+                {
                     //  Call UpdateLocation method every second
-                    InvokeRepeating(nameof(UpdateLocation), 2f, 2f);
+                    InvokeRepeating(nameof(UpdateLocation), 3f, 1f);
                 }
             }
 #endif
@@ -214,7 +232,8 @@ namespace LAN.LiveLocation {
         /// <summary>
         /// Stop location services
         /// </summary>
-        public virtual void StopService() {
+        public virtual void StopService()
+        {
             OnLocationFound = null;
             IsRunning = false;
             CancelInvoke(nameof(UpdateLocation));
@@ -229,7 +248,8 @@ namespace LAN.LiveLocation {
         /// <summary>
         /// Update realtime location data
         /// </summary>
-        public virtual void UpdateLocation() {
+        public virtual void UpdateLocation()
+        {
             IsUpdatingLocation = true;
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (HasPermission && IsRunning) {
@@ -245,10 +265,11 @@ namespace LAN.LiveLocation {
                 OnLocationFound?.Invoke("Failed to get access or permission location", Location.Default);
             }
 #else
-            if (HasPermission && Input.location.isEnabledByUser) {
-                Debug.Log($"{Input.location.status}::{JsonUtility.ToJson(Input.location.lastData)}");
+            if (HasPermission && Input.location.isEnabledByUser)
+            {
                 //  Access granted and it has been initialized
-                Location location = new() {
+                Location location = new()
+                {
                     latitude = Input.location.lastData.latitude,
                     longitude = Input.location.lastData.longitude,
                     accuracy = Input.location.lastData.horizontalAccuracy,
@@ -257,14 +278,16 @@ namespace LAN.LiveLocation {
 
                 OnLocationFound?.Invoke(null, location);
                 LastLocation = location;
-            } else {
+            } else
+            {
                 //  Service stopped
                 OnLocationFound?.Invoke("Failed to get access or permission location", Location.Default);
             }
 #endif
         }
 
-        public static double ToDoubleExact(string value, double defaultValue = 0) {
+        public static double ToDoubleExact(string value, double defaultValue = 0)
+        {
             double target = (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out target) ? target : defaultValue);
             return target;
         }

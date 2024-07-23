@@ -1,4 +1,6 @@
+using LAN.Android;
 using UnityEngine;
+using UnityEngine.Android;
 using UnityEngine.UI;
 
 namespace LAN.LiveLocation.Example {
@@ -20,6 +22,25 @@ namespace LAN.LiveLocation.Example {
 
         public void StopService() {
             liveLocation.StopService();
+        }
+
+        public void RequestPermission()
+        {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            if (!LiveLocation.HasPermission)
+            {
+                Debug.Log("Has no Permission!");
+                LiveLocationProvider.RequestPermissions(LiveLocationProvider.RequiredPermissions);
+            }
+            else Debug.Log("Has Permission!");
+#endif
+        }
+
+        public void OptimizeBatteryUsage()
+        {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            BatteryOptimization.OpenSetting();
+#endif
         }
 
         public void UpdateLocation() {

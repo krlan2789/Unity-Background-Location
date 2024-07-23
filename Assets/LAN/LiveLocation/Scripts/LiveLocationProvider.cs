@@ -1,46 +1,66 @@
+using LAN.Android;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using LAN.Android;
 using UnityEngine;
 using UnityEngine.Android;
 
-namespace LAN.LiveLocation {
-    public enum NetworkMethod {
+namespace LAN.LiveLocation
+{
+    public enum NetworkMethod
+    {
         RESTFULL = 0, WEBSOCKET = 1
     }
 
-    public enum LiveLocationStatus {
+    public enum LiveLocationStatus
+    {
         RUNNING = 0, DEAD = 1
     }
 
-    public class LiveLocationProvider {
+    public class LiveLocationProvider
+    {
 #if UNITY_ANDROID && !UNITY_EDITOR
         private static AndroidJavaObject alienPortalInstance;
-#endif
 
-        private static string[] requiredPermissions = new string[] {
+        private static readonly string[] requiredPermissions = new string[] {
+            "android.permission.ACCESS_COARSE_LOCATION",
+            "android.permission.ACCESS_FINE_LOCATION",
             "android.permission.FOREGROUND_SERVICE",
-            "android.permission.FOREGROUND_SERVICE_LOCATION",
+            //"android.permission.FOREGROUND_SERVICE_LOCATION",
             "android.permission.ACCESS_BACKGROUND_LOCATION",
-            Permission.CoarseLocation,
-            Permission.FineLocation,
             "android.permission.INTERNET"
         };
+#endif
 
-        public static string[] RequiredPermissions {
-            get {
-                return requiredPermissions;
+        public static string[] RequiredPermissions
+        {
+            get
+            {
+                var list = new List<string>();
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+                foreach (string perm in requiredPermissions)
+                {
+                    //if (AndroidSdkVersion < 29 && perm == "android.permission.FOREGROUND_SERVICE_LOCATION") continue;
+                    list.Add(perm);
+                }
+#endif
+
+                return list.ToArray();
             }
         }
 
-        public static bool HasPermission {
-            get {
+        public static bool HasPermission
+        {
+            get
+            {
 #if UNITY_ANDROID && !UNITY_EDITOR
                 foreach (string perm in requiredPermissions) {
-                    if (AndroidSdkVersion >= 29 && perm == "android.permission.FOREGROUND_SERVICE_LOCATION") continue;
-                    if (!Permission.HasUserAuthorizedPermission(perm)) return false;
+                    //if (AndroidSdkVersion < 29 && perm == "android.permission.FOREGROUND_SERVICE_LOCATION") continue;
+                    bool status = Permission.HasUserAuthorizedPermission(perm);
+                    //Debug.Log($"{perm} is {(status ? "allowed" : "denied")}");
+                    if (!status) return false;
                 }
 #endif
                 return true;
@@ -50,8 +70,10 @@ namespace LAN.LiveLocation {
         /// <summary>
         /// Status for Location Provider. RUNNING or DEAD
         /// </summary>
-        public static LiveLocationStatus Status {
-            get {
+        public static LiveLocationStatus Status
+        {
+            get
+            {
 #if UNITY_ANDROID && !UNITY_EDITOR
                 if (alienPortalInstance == null) return LiveLocationStatus.DEAD;
                 string _status = alienPortalInstance.Call<string>("getStatus").ToUpper();
@@ -65,8 +87,10 @@ namespace LAN.LiveLocation {
         /// <summary>
         /// Erorr message when has an error
         /// </summary>
-        public static string ErrorMessage {
-            get {
+        public static string ErrorMessage
+        {
+            get
+            {
 #if UNITY_ANDROID && !UNITY_EDITOR
                 if (alienPortalInstance == null) return "";
                 return alienPortalInstance.Call<string>("getErrorMessage");
@@ -76,8 +100,10 @@ namespace LAN.LiveLocation {
             }
         }
 
-        public static double Latitude {
-            get {
+        public static double Latitude
+        {
+            get
+            {
 #if UNITY_ANDROID && !UNITY_EDITOR
                 if (alienPortalInstance == null) return 0;
                 string val = alienPortalInstance.Call<string>("getLatitude");
@@ -88,8 +114,10 @@ namespace LAN.LiveLocation {
             }
         }
 
-        public static double Longitude {
-            get {
+        public static double Longitude
+        {
+            get
+            {
 #if UNITY_ANDROID && !UNITY_EDITOR
                 if (alienPortalInstance == null) return 0;
                 string val = alienPortalInstance.Call<string>("getLongitude");
@@ -100,8 +128,10 @@ namespace LAN.LiveLocation {
             }
         }
 
-        public static float Accuracy {
-            get {
+        public static float Accuracy
+        {
+            get
+            {
 #if UNITY_ANDROID && !UNITY_EDITOR
                 if (alienPortalInstance == null) return 0;
                 string val = alienPortalInstance.Call<string>("getAccuracy");
@@ -112,8 +142,10 @@ namespace LAN.LiveLocation {
             }
         }
 
-        public static DateTime UpdatedTime {
-            get {
+        public static DateTime UpdatedTime
+        {
+            get
+            {
 #if UNITY_ANDROID && !UNITY_EDITOR
                 if (alienPortalInstance == null) return DateTime.Now;
                 string val = alienPortalInstance.Call<string>("getUpdatedTime");
@@ -128,8 +160,10 @@ namespace LAN.LiveLocation {
         /// <summary>
         /// Object that contain Longitude, Latitude, Accuracy, UpdateTime
         /// </summary>
-        public static Location LastLocation {
-            get {
+        public static Location LastLocation
+        {
+            get
+            {
 #if UNITY_ANDROID && !UNITY_EDITOR
                 if (alienPortalInstance == null) return Location.Default;
                 return new Location() {
@@ -157,7 +191,8 @@ namespace LAN.LiveLocation {
         /// <summary>
         /// Main setup to use this feature
         /// </summary>
-        public static void Setup() {
+        public static void Setup()
+        {
 #if UNITY_ANDROID && !UNITY_EDITOR
             AndroidJavaClass alienPortalClass = new("com.singularity_code.live_location.util.other.AlienPortal");
             alienPortalInstance = alienPortalClass.CallStatic<AndroidJavaObject>("newInstance");
@@ -176,7 +211,8 @@ namespace LAN.LiveLocation {
         /// <param name="id"></param>
         /// <param name="name"></param>
         /// <param name="description"></param>
-        public static void SetupChannel(string id = "Live Location", string name = "Live Location", string description = "Live Location Tracking") {
+        public static void SetupChannel(string id = "Live Location", string name = "Live Location", string description = "Live Location Tracking")
+        {
             SetChannelId(id);
             SetChannelName(name);
             SetChannelDescription(description);
@@ -189,7 +225,8 @@ namespace LAN.LiveLocation {
         /// </summary>
         /// <param name="title"></param>
         /// <param name="message"></param>
-        public static void SetupNotification(string title = "Live Location Tracking", string message = "Live location is running") {
+        public static void SetupNotification(string title = "Live Location Tracking", string message = "Live location is running")
+        {
             SetNotificationTitle(title);
             SetNotificationMessage(message);
             Debug.Log("Setup foreground notification");
@@ -201,100 +238,131 @@ namespace LAN.LiveLocation {
         /// </summary>
         /// <param name="url"></param>
         /// <param name="networkMethod"></param>
-        public static void SetupURL(string url, NetworkMethod networkMethod = NetworkMethod.WEBSOCKET) {
+        public static void SetupURL(string url, NetworkMethod networkMethod = NetworkMethod.WEBSOCKET)
+        {
             SetupAPIorSocketURL(url);
             SetupNetworkMethod(networkMethod);
             Debug.Log("Setup API url");
         }
 
-        public static void SetGPSSamplingRate(long samplingRate = 5000) {
+        public static void SetGPSSamplingRate(long samplingRate = 5000)
+        {
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (alienPortalInstance == null) return;
             alienPortalInstance.Call("setGPSSamplingRate", samplingRate);
 #endif
         }
 
-        public static void SetContext() {
+        public static void SetContext()
+        {
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (alienPortalInstance == null) return;
             alienPortalInstance.Call("setContext", UnityActivityJavaClass.CurrentActivity);
 #endif
         }
 
-        public static void SetChannelId(string id) {
+        public static void SetChannelId(string id)
+        {
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (alienPortalInstance == null) return;
             alienPortalInstance.Call("setChannelId", id);
 #endif
         }
 
-        public static void SetChannelName(string name) {
+        public static void SetChannelName(string name)
+        {
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (alienPortalInstance == null) return;
             alienPortalInstance.Call("setChannelName", name);
 #endif
         }
 
-        public static void SetChannelDescription(string description) {
+        public static void SetChannelDescription(string description)
+        {
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (alienPortalInstance == null) return;
             alienPortalInstance.Call("setChannelDescription", description);
 #endif
         }
 
-        public static void SetupAPIorSocketURL(string url) {
+        public static void SetupAPIorSocketURL(string url)
+        {
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (alienPortalInstance == null) return;
             alienPortalInstance.Call("setupAPIorSocketURL", url);
 #endif
         }
 
-        public static void SetNotificationTitle(string title) {
+        public static void SetNotificationTitle(string title)
+        {
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (alienPortalInstance == null) return;
             alienPortalInstance.Call("setNotificationTitle", title);
 #endif
         }
 
-        public static void SetNotificationMessage(string message) {
+        public static void SetNotificationMessage(string message)
+        {
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (alienPortalInstance == null) return;
             alienPortalInstance.Call("setNotificationMessage", message);
 #endif
         }
 
-        public static void SetupNetworkMethod(NetworkMethod methodEnumIndex) {
+        public static void SetupNetworkMethod(NetworkMethod methodEnumIndex)
+        {
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (alienPortalInstance == null) return;
             alienPortalInstance.Call("setupNetworkMethod", (int)methodEnumIndex);
 #endif
         }
 
-        public static void AddHeader(string key, string value) {
+        public static void AddHeader(string key, string value)
+        {
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (alienPortalInstance == null) return;
             alienPortalInstance.Call("addHeader", key, value);
 #endif
         }
 
-        public static void ClearHeader() {
+        public static void ClearHeader()
+        {
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (alienPortalInstance == null) return;
             alienPortalInstance.Call("clearHeader");
 #endif
         }
 
-        public static void SetMessageDescriptor(string descriptor) {
+        public static void SetMessageDescriptor(string descriptor)
+        {
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (alienPortalInstance == null) return;
             alienPortalInstance.Call("setMessageDescriptor", descriptor);
 #endif
         }
 
+        public static void RequestPermissions(string[] permissions)
+        {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            if (AndroidSdkVersion > 33)
+            {
+                UnityActivityJavaClass.OpenSetting();
+            }
+            else
+            {
+                Permission.RequestUserPermissions(RequiredPermissions);
+                //if (alienPortalInstance == null) return;
+                //Debug.Log("alienPortalInstance.RequestPermissions!");
+                //alienPortalInstance.Call("requestPermissions", permissions);
+            }
+#endif
+        }
+
         /// <summary>
         /// Start the service
         /// </summary>
-        public static void Start() {
+        public static void Start()
+        {
             Debug.Log("Start service");
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (alienPortalInstance == null) return;
@@ -306,7 +374,8 @@ namespace LAN.LiveLocation {
         /// <summary>
         /// Stop the service
         /// </summary>
-        public static void Stop() {
+        public static void Stop()
+        {
             Debug.Log("Stop service");
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (alienPortalInstance == null) return;
@@ -314,14 +383,16 @@ namespace LAN.LiveLocation {
 #endif
         }
 
-        public static double ToDoubleExact(string value) {
+        public static double ToDoubleExact(string value)
+        {
             if (string.IsNullOrEmpty(value)) return 0;
             value = value.Replace(",", ".");
             double target = (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out target) ? target : 0);
             return target;
         }
 
-        public static float ToFloatExact(string value) {
+        public static float ToFloatExact(string value)
+        {
             if (string.IsNullOrEmpty(value)) return 0;
             value = value.Replace(",", ".");
             float target = (float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out target) ? target : 0);

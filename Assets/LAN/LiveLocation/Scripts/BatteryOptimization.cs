@@ -4,8 +4,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace LAN.LiveLocation {
-    public static class BatteryOptimization {
+namespace LAN.LiveLocation
+{
+    public static class BatteryOptimization
+    {
         private static KeyValuePair<string, string>[] POWER_MANAGER_COMPONENTS_NAME = new KeyValuePair<string, string>[] {
             KeyValuePair.Create("com.samsung.android.lool", "com.samsung.android.sm.battery.ui.BatteryActivity"),
             KeyValuePair.Create("com.samsung.android.lool", "com.samsung.android.sm.ui.battery.BatteryActivity"),
@@ -26,14 +28,16 @@ namespace LAN.LiveLocation {
             KeyValuePair.Create("com.google.android.apps.turbo", "com.google.android.libraries.smartbattery.appusage.library.EvaluateAppBucketsJo"),    //  Sony Xperia XZ3
         };
 
-#if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR && !UNITY_EDITOR
         private static AndroidJavaObject unityActivity = null;
         private static AndroidJavaObject powerManager = null;
 #endif
 
-        public static bool IsIgnoringBatteryOptimizations {
-            get {
-#if UNITY_ANDROID && !UNITY_EDITOR
+        public static bool IsIgnoringBatteryOptimizations
+        {
+            get
+            {
+#if UNITY_ANDROID && !UNITY_EDITOR && !UNITY_EDITOR
                 if (powerManager == null) Setup();
                 if (powerManager == null) return true;
                 Debug.Log("PowerManager not null");
@@ -44,15 +48,17 @@ namespace LAN.LiveLocation {
             }
         }
 
-        public static void Setup() {
-#if UNITY_ANDROID && !UNITY_EDITOR
+        public static void Setup()
+        {
+#if UNITY_ANDROID && !UNITY_EDITOR && !UNITY_EDITOR
             unityActivity = UnityActivityJavaClass.CurrentActivity;
             powerManager = UnityActivityJavaClass.GetSystemService("power");
 #endif
         }
 
-        public static void OpenSetting() {
-#if UNITY_ANDROID && !UNITY_EDITOR
+        public static void OpenSetting()
+        {
+#if UNITY_ANDROID && !UNITY_EDITOR && !UNITY_EDITOR
             if (unityActivity == null) Setup();
             if (unityActivity == null) return;
 
@@ -62,11 +68,11 @@ namespace LAN.LiveLocation {
                 if (sdkVersion > 23 && !IsIgnoringBatteryOptimizations) {
                     bool success = TryStartPowerManagerByVendor();
                     if (!success) {
-                        success = UnityActivityJavaClass.TryStartActivity(UnityActivityJavaClass.CreateIntent(Settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS).Call<AndroidJavaObject>("setData", UnityActivityJavaClass.URI_CLASS.CallStatic<AndroidJavaObject>("parse", "package:" + UnityActivityJavaClass.PackageName)));
+                        success = UnityActivityJavaClass.TryStartActivity(UnityActivityJavaClass.CreateIntent(Settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS).Call<AndroidJavaObject>("setData", UnityActivityJavaClass.UriPackageObject));
                         if (!success) {
                             success = UnityActivityJavaClass.TryStartActivity(UnityActivityJavaClass.CreateIntent(Settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
                             if (!success) {
-                                success = UnityActivityJavaClass.TryStartActivity(UnityActivityJavaClass.CreateIntent(Settings.APPLICATION_DETAILS_SETTINGS).Call<AndroidJavaObject>("setData", UnityActivityJavaClass.URI_CLASS.CallStatic<AndroidJavaObject>("parse", "package:" + UnityActivityJavaClass.PackageName)));
+                                success = UnityActivityJavaClass.TryStartActivity(UnityActivityJavaClass.CreateIntent(Settings.APPLICATION_DETAILS_SETTINGS).Call<AndroidJavaObject>("setData", UnityActivityJavaClass.UriPackageObject));
                                 if (!success) {
                                     UnityActivityJavaClass.TryStartActivity(UnityActivityJavaClass.CreateIntent(Settings.APPLICATION_DETAILS_SETTINGS));
                                 }
@@ -81,8 +87,9 @@ namespace LAN.LiveLocation {
             Debug.Log("Start battery optimization");
         }
 
-        public static bool TryStartPowerManagerByVendor() {
-#if UNITY_ANDROID && !UNITY_EDITOR
+        public static bool TryStartPowerManagerByVendor()
+        {
+#if UNITY_ANDROID && !UNITY_EDITOR && !UNITY_EDITOR
             if (unityActivity == null) Setup();
             if (unityActivity == null) return false;
 
