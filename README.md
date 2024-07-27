@@ -1,6 +1,6 @@
 # Unity Background Location
 
-Unity Android - Test background location Plugin
+Background Location Example Project
 
 ## **Requirements and Installation**
 
