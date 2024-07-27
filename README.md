@@ -9,15 +9,17 @@ Unity Android - Test background location Plugin
     - Follows [this](https://openupm.com/packages/com.google.external-dependency-manager/#modal-manualinstallation) step.
     - Or, download and import [this](https://github.com/googlesamples/unity-jar-resolver/blob/master/external-dependency-manager-latest.unitypackage) unity package.
 
-2. Make sure minimum API Level set to `API Level 26` :
+2. Import [Unity Package](https://github.com/krlan2789/Unity-Background-Location/releases).
+
+3. Make sure minimum API Level set to `API Level 26` :
 
     <img src="./Screenshot/Min_Android_API_Level.png" height="auto" width="640px" />
 
-3. Check following build settings :
+4. Check following build settings :
 
     <img src="./Screenshot/Build_Settings.png" height="auto" width="640px" />
 
-4. Add required-optional permissions to `Assets/Plugins/Android/AndroidManifest.xml` :
+5. Add required-optional permissions to `Assets/Plugins/Android/AndroidManifest.xml` :
 
     ```XML
     ...
@@ -40,7 +42,7 @@ Unity Android - Test background location Plugin
     ...
     ```
 
-5. Insert script below into `Assets\Plugins\Android\launcherTemplate.gradle` :
+6. Insert script below into `Assets\Plugins\Android\launcherTemplate.gradle` :
 
     ```Gradle
     ...
@@ -60,7 +62,7 @@ Unity Android - Test background location Plugin
     }
     ```
 
-6. Insert script below into `Assets\Plugins\Android\mainTemplate.gradle` :
+7. Insert script below into `Assets\Plugins\Android\mainTemplate.gradle` :
 
     ```Gradle
     ...
@@ -80,7 +82,7 @@ Unity Android - Test background location Plugin
     ...
     ```
 
-7. Insert script below into `Assets\Plugins\Android\gradleTemplate.properties` :
+8. Insert script below into `Assets\Plugins\Android\gradleTemplate.properties` :
 
     ```Properties
     ...
