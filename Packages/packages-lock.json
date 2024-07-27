@@ -1,5 +1,18 @@
 {
   "dependencies": {
+    "com.google.external-dependency-manager": {
+      "version": "1.2.181",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
+    },
+    "com.lan.live-location": {
+      "version": "file:com.lan.live-location",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.unity.ai.navigation": {
       "version": "1.1.4",
       "depth": 0,

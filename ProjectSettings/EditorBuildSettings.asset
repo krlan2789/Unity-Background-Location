@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/LAN/LiveLocation/Scenes/TestBgLocation.unity
+    path: Assets/Samples/Basic/Scenes/TestBgLocation.unity
     guid: d104ccdb430adf645848b08c820bea9e
   m_configObjects: {}
