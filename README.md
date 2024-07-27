@@ -13,11 +13,11 @@ Unity Android - Test background location Plugin
 
 3. Make sure minimum API Level set to `API Level 26` :
 
-    <img src="https://github.com/krlan2789/Unity-Background-Location/blob/main/Screenshot/Min_Android_API_Level.png" height="auto" width="640px" />
+    <img class="use-github-assets" src="./Screenshot/Min_Android_API_Level.png" height="auto" width="640px" />
 
 4. Check following build settings :
 
-    <img src="https://github.com/krlan2789/Unity-Background-Location/blob/main/Screenshot/Build_Settings.png" height="auto" width="640px" />
+    <img class="use-github-assets" src="./Screenshot/Build_Settings.png" height="auto" width="640px" />
 
 5. Add required-optional permissions to `Assets/Plugins/Android/AndroidManifest.xml` :
 
@@ -102,19 +102,19 @@ Unity Android - Test background location Plugin
 
 1. `Custom Gradle Properties Template` :
 
-    <img src="https://github.com/krlan2789/Unity-Background-Location/blob/main/Screenshot/Error_gradleproperties_unchecked_popup.png" height="auto" width="640px" />
+    <img class="use-github-assets" src="./Screenshot/Error_gradleproperties_unchecked_popup.png" height="auto" width="640px" />
     
     <br/>
     
-    <img src="https://github.com/krlan2789/Unity-Background-Location/blob/main/Screenshot/Error_gradleproperties_unchecked.png" height="auto" width="640px" />
+    <img class="use-github-assets" src="./Screenshot/Error_gradleproperties_unchecked.png" height="auto" width="640px" />
 
 <br>
 
 2. `Custom Launcher Gradle` and `Custom Main Gradle` :
 
-    <img src="https://github.com/krlan2789/Unity-Background-Location/blob/main/Screenshot/Error_manifestgradle_unchecked_popup.png" height="auto" width="640px" />
+    <img class="use-github-assets" src="./Screenshot/Error_manifestgradle_unchecked_popup.png" height="auto" width="640px" />
     
     <br/>
     
-    <img src="https://github.com/krlan2789/Unity-Background-Location/blob/main/Screenshot/Error_manifestgradle_unchecked.png" height="auto" width="640px" />
+    <img class="use-github-assets" src="./Screenshot/Error_manifestgradle_unchecked.png" height="auto" width="640px" />
 
