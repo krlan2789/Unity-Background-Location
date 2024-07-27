@@ -2,14 +2,18 @@
 
 Unity Android - Test background location Plugin
 
-## **Requirements**
+## **Requirements and Installation**
 
-1. Install External Dependency Manager for Unity first :
+1. Install `External Dependency Manager for Unity` :
 
     - Follows [this](https://openupm.com/packages/com.google.external-dependency-manager/#modal-manualinstallation) step.
-    - Or, download and import [this](https://github.com/googlesamples/unity-jar-resolver/blob/master/external-dependency-manager-latest.unitypackage) unity package.
+    - Or, download and import [this](https://github.com/googlesamples/unity-jar-resolver/blob/master/external-dependency-manager-latest.unitypackage) custom package.
 
-2. Import [Unity Package](https://github.com/krlan2789/Unity-Background-Location/releases).
+2. Install `Live Location` using the Package Manager :
+
+    - Open the Package Manager Window.
+    - Click the add button in the Package Manager's toolbar.
+    - Copy and paste `https://github.com/krlan2789/Unity-LAN-LiveLocation-Plugin.git` into the textbox, then enter.
 
 3. Make sure minimum API Level set to `API Level 26` :
 
@@ -82,7 +86,7 @@ Unity Android - Test background location Plugin
     ...
     ```
 
-8. Insert script below into `Assets\Plugins\Android\gradleTemplate.properties` :
+8.  Insert script below into `Assets\Plugins\Android\gradleTemplate.properties` :
 
     ```Properties
     ...
