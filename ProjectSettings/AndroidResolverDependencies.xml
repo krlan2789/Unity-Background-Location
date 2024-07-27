@@ -10,14 +10,66 @@
     <package>org.jetbrains.kotlin:kotlin-stdlib:1.8.22</package>
     <package>org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.0</package>
   </packages>
-  <files />
+  <files>
+    <file>Assets/Plugins/Android/androidx.annotation.annotation-1.1.0.jar</file>
+    <file>Assets/Plugins/Android/androidx.arch.core.core-common-2.0.0.jar</file>
+    <file>Assets/Plugins/Android/androidx.arch.core.core-runtime-2.0.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.asynclayoutinflater.asynclayoutinflater-1.0.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.collection.collection-1.0.0.jar</file>
+    <file>Assets/Plugins/Android/androidx.coordinatorlayout.coordinatorlayout-1.0.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.core.core-1.2.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.cursoradapter.cursoradapter-1.0.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.customview.customview-1.0.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.documentfile.documentfile-1.0.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.drawerlayout.drawerlayout-1.0.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.fragment.fragment-1.0.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.interpolator.interpolator-1.0.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.legacy.legacy-support-core-ui-1.0.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.legacy.legacy-support-core-utils-1.0.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.lifecycle.lifecycle-common-2.0.0.jar</file>
+    <file>Assets/Plugins/Android/androidx.lifecycle.lifecycle-livedata-2.0.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.lifecycle.lifecycle-livedata-core-2.0.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.lifecycle.lifecycle-runtime-2.0.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.lifecycle.lifecycle-viewmodel-2.0.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.loader.loader-1.0.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.localbroadcastmanager.localbroadcastmanager-1.0.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.print.print-1.0.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.slidingpanelayout.slidingpanelayout-1.0.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.swiperefreshlayout.swiperefreshlayout-1.0.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.versionedparcelable.versionedparcelable-1.1.0.aar</file>
+    <file>Assets/Plugins/Android/androidx.viewpager.viewpager-1.0.0.aar</file>
+    <file>Assets/Plugins/Android/com.github.chuckerteam.chucker.library-no-op-4.0.0.aar</file>
+    <file>Assets/Plugins/Android/com.google.android.gms.play-services-base-18.1.0.aar</file>
+    <file>Assets/Plugins/Android/com.google.android.gms.play-services-basement-18.1.0.aar</file>
+    <file>Assets/Plugins/Android/com.google.android.gms.play-services-location-21.0.1.aar</file>
+    <file>Assets/Plugins/Android/com.google.android.gms.play-services-maps-18.1.0.aar</file>
+    <file>Assets/Plugins/Android/com.google.android.gms.play-services-tasks-18.0.2.aar</file>
+    <file>Assets/Plugins/Android/com.google.code.gson.gson-2.8.5.jar</file>
+    <file>Assets/Plugins/Android/com.squareup.okhttp3.okhttp-4.11.0.jar</file>
+    <file>Assets/Plugins/Android/com.squareup.okio.okio-3.2.0.jar</file>
+    <file>Assets/Plugins/Android/com.squareup.okio.okio-jvm-3.2.0.jar</file>
+    <file>Assets/Plugins/Android/com.squareup.retrofit2.converter-gson-2.9.0.jar</file>
+    <file>Assets/Plugins/Android/com.squareup.retrofit2.retrofit-2.9.0.jar</file>
+    <file>Assets/Plugins/Android/io.arrow-kt.arrow-annotations-jvm-1.2.0-RC.jar</file>
+    <file>Assets/Plugins/Android/io.arrow-kt.arrow-atomic-jvm-1.2.0-RC.jar</file>
+    <file>Assets/Plugins/Android/io.arrow-kt.arrow-continuations-jvm-1.2.0-RC.jar</file>
+    <file>Assets/Plugins/Android/io.arrow-kt.arrow-core-jvm-1.2.0-RC.jar</file>
+    <file>Assets/Plugins/Android/org.codehaus.mojo.animal-sniffer-annotations-1.21.jar</file>
+    <file>Assets/Plugins/Android/org.jetbrains.annotations-23.0.0.jar</file>
+    <file>Assets/Plugins/Android/org.jetbrains.kotlin.kotlin-stdlib-1.8.22.jar</file>
+    <file>Assets/Plugins/Android/org.jetbrains.kotlin.kotlin-stdlib-common-1.8.22.jar</file>
+    <file>Assets/Plugins/Android/org.jetbrains.kotlin.kotlin-stdlib-jdk7-1.8.20.jar</file>
+    <file>Assets/Plugins/Android/org.jetbrains.kotlin.kotlin-stdlib-jdk8-1.8.20.jar</file>
+    <file>Assets/Plugins/Android/org.jetbrains.kotlinx.kotlinx-coroutines-core-jvm-1.7.0.jar</file>
+    <file>Assets/Plugins/Android/org.jetbrains.kotlinx.kotlinx-coroutines-play-services-1.7.0.jar</file>
+  </files>
   <settings>
-    <setting name="androidAbis" value="arm64-v8a,armeabi-v7a" />
+    <setting name="androidAbis" value="arm64-v8a" />
     <setting name="bundleId" value="com.LAN.BackgroundLocation" />
     <setting name="explodeAars" value="True" />
     <setting name="gradleBuildEnabled" value="True" />
     <setting name="gradlePropertiesTemplateEnabled" value="True" />
-    <setting name="gradleTemplateEnabled" value="True" />
+    <setting name="gradleTemplateEnabled" value="False" />
     <setting name="installAndroidPackages" value="True" />
     <setting name="localMavenRepoDir" value="Assets/GeneratedLocalRepo" />
     <setting name="packageDir" value="Assets/Plugins/Android" />

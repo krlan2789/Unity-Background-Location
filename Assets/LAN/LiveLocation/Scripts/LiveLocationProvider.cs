@@ -26,10 +26,11 @@ namespace LAN.LiveLocation
         private static readonly string[] requiredPermissions = new string[] {
             "android.permission.ACCESS_COARSE_LOCATION",
             "android.permission.ACCESS_FINE_LOCATION",
-            "android.permission.FOREGROUND_SERVICE",
+            "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS",
+            //"android.permission.FOREGROUND_SERVICE",
             //"android.permission.FOREGROUND_SERVICE_LOCATION",
-            "android.permission.ACCESS_BACKGROUND_LOCATION",
-            "android.permission.INTERNET"
+            //"android.permission.ACCESS_BACKGROUND_LOCATION",
+            //"android.permission.INTERNET"
         };
 #endif
 
@@ -344,18 +345,18 @@ namespace LAN.LiveLocation
         public static void RequestPermissions(string[] permissions)
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
-            if (AndroidSdkVersion > 33)
-            {
-                UnityActivityJavaClass.OpenSetting();
-            }
-            else
-            {
-                Permission.RequestUserPermissions(RequiredPermissions);
-                //if (alienPortalInstance == null) return;
-                //Debug.Log("alienPortalInstance.RequestPermissions!");
-                //alienPortalInstance.Call("requestPermissions", permissions);
-            }
+            Permission.RequestUserPermissions(RequiredPermissions);
 #endif
+            //if (AndroidSdkVersion > 33)
+            //{
+            //    UnityActivityJavaClass.OpenSetting();
+            //}
+            //else
+            //{
+            //    if (alienPortalInstance == null) return;
+            //    Debug.Log("alienPortalInstance.RequestPermissions!");
+            //    alienPortalInstance.Call("requestPermissions", permissions);
+            //}
         }
 
         /// <summary>

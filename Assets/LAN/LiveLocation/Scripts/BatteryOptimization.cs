@@ -41,7 +41,9 @@ namespace LAN.LiveLocation
                 if (powerManager == null) Setup();
                 if (powerManager == null) return true;
                 Debug.Log("PowerManager not null");
-                return powerManager.Call<bool>("isIgnoringBatteryOptimizations", UnityActivityJavaClass.PackageName);
+                bool status = powerManager.Call<bool>("isIgnoringBatteryOptimizations", UnityActivityJavaClass.PackageName);
+                Debug.Log("PowerManager.isIgnoringBatteryOptimizations: " + status);
+                return status;
 #else
                 return true;
 #endif
@@ -67,14 +69,27 @@ namespace LAN.LiveLocation
 
                 if (sdkVersion > 23 && !IsIgnoringBatteryOptimizations) {
                     bool success = TryStartPowerManagerByVendor();
+
                     if (!success) {
-                        success = UnityActivityJavaClass.TryStartActivity(UnityActivityJavaClass.CreateIntent(Settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS).Call<AndroidJavaObject>("setData", UnityActivityJavaClass.UriPackageObject));
+                        var intent = UnityActivityJavaClass.CreateIntent(Settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                            .Call<AndroidJavaObject>("setAction", "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS")
+                            .Call<AndroidJavaObject>("setData", UnityActivityJavaClass.UriPackageObject);
+                        success = UnityActivityJavaClass.TryStartActivity(intent);
+
                         if (!success) {
-                            success = UnityActivityJavaClass.TryStartActivity(UnityActivityJavaClass.CreateIntent(Settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
+                            Debug.LogWarning("First PowerManager failed");
+                            intent = UnityActivityJavaClass.CreateIntent(Settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                            success = UnityActivityJavaClass.TryStartActivity(intent);
+
                             if (!success) {
-                                success = UnityActivityJavaClass.TryStartActivity(UnityActivityJavaClass.CreateIntent(Settings.APPLICATION_DETAILS_SETTINGS).Call<AndroidJavaObject>("setData", UnityActivityJavaClass.UriPackageObject));
+                                Debug.LogWarning("Second PowerManager failed");
+                                intent = UnityActivityJavaClass.CreateIntent(Settings.APPLICATION_DETAILS_SETTINGS).Call<AndroidJavaObject>("setData", UnityActivityJavaClass.UriPackageObject);
+                                success = UnityActivityJavaClass.TryStartActivity(intent);
+
                                 if (!success) {
-                                    UnityActivityJavaClass.TryStartActivity(UnityActivityJavaClass.CreateIntent(Settings.APPLICATION_DETAILS_SETTINGS));
+                                    Debug.LogWarning("Third PowerManager failed");
+                                    intent = UnityActivityJavaClass.CreateIntent(Settings.APPLICATION_DETAILS_SETTINGS);
+                                    UnityActivityJavaClass.TryStartActivity(intent);
                                 }
                             }
                         }
@@ -95,13 +110,15 @@ namespace LAN.LiveLocation
 
             foreach (var kvp in POWER_MANAGER_COMPONENTS_NAME) {
                 var intentObject = UnityActivityJavaClass.CreateIntentWithComponent(kvp.Key, kvp.Value);
-                var hasActivity = UnityActivityJavaClass.GetPackageManager().Call<AndroidJavaObject>(UnityActivityJavaClass.RESOLVE_ACTIVITY_METHOD, intentObject, UnityActivityJavaClass.PACKAGE_MANAGER_CLASS.GetStatic<int>(UnityActivityJavaClass.PACKAGE_MANAGER_MATCH_DEFAULT_ONLY_PROP));
+                int pmDefaultOnlyProp = UnityActivityJavaClass.PACKAGE_MANAGER_CLASS.GetStatic<int>(UnityActivityJavaClass.PACKAGE_MANAGER_MATCH_DEFAULT_ONLY_PROP);
+                var hasActivity = UnityActivityJavaClass.GetPackageManager().Call<AndroidJavaObject>(UnityActivityJavaClass.RESOLVE_ACTIVITY_METHOD, intentObject, pmDefaultOnlyProp);
+
                 if (hasActivity != null) {
                     Debug.Log($"{kvp.Key} : {kvp.Value}");
                     UnityActivityJavaClass.StartActivity(intentObject);
                     return true;
                 } else {
-                    Debug.Log($"Not found: {kvp.Key} : {kvp.Value}");
+                    Debug.LogWarning($"Not found: {kvp.Key} : {kvp.Value}");
                 }
             }
 #endif

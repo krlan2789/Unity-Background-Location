@@ -22,8 +22,8 @@ namespace LAN.Android
         public static readonly AndroidJavaClass VERSION_INFO_CLASS = new("android.os.Build$VERSION");
         public static readonly AndroidJavaClass UNITY_PLAYER_CLASS = new("com.unity3d.player.UnityPlayer");
         public static readonly AndroidJavaClass PACKAGE_MANAGER_CLASS = new("android.content.pm.PackageManager");
-        public static readonly AndroidJavaClass ACTIVITY_RESULT_LAUNCHER_CLASS = new("androidx.activity.result.ActivityResultLauncher");
-        public static readonly AndroidJavaClass ACTIVITY_RESULT_CONTRACTS_CLASS = new("androidx.activity.result.contract.ActivityResultContracts");
+        //public static readonly AndroidJavaClass ACTIVITY_RESULT_LAUNCHER_CLASS = new("androidx.activity.result.ActivityResultLauncher");
+        //public static readonly AndroidJavaClass ACTIVITY_RESULT_CONTRACTS_CLASS = new("androidx.activity.result.contract.ActivityResultContracts");
 
         public static readonly string INTENT_CLASS_PATH = "android.content.Intent";
         public static readonly string COMPONENT_NAME_CLASS_PATH = "android.content.ComponentName";
@@ -54,7 +54,9 @@ namespace LAN.Android
 
         public static AndroidJavaObject UriPackageObject {
             get {
-                AndroidJavaObject uri = URI_CLASS.CallStatic<AndroidJavaObject>("parse", "package:" + PackageName);
+                string packageScheme = "package:" + PackageName;
+                AndroidJavaObject uri = URI_CLASS.CallStatic<AndroidJavaObject>("parse", packageScheme);
+                Debug.Log(packageScheme + " :: " + uri.Call<string>("getScheme"));
                 return uri;
             }
         }
@@ -104,7 +106,6 @@ namespace LAN.Android
         }
 
         public static void RequestPermissions(string[] permissions) {
-
             if (Application.isFocused)
             {
                 CurrentActivity.Call(REQUEST_PERMISSIONS_METHOD, permissions, 201);
@@ -143,7 +144,6 @@ namespace LAN.Android
 
         //public static void RequestPermissions(string[] permissions)
         //{
-
         //    if (Application.isFocused)
         //    {
         //        //CurrentActivity.Call(REQUEST_PERMISSIONS_METHOD, permissions, 201);

@@ -47,10 +47,12 @@ android {
         }
     }**PACKAGING_OPTIONS****PLAY_ASSET_PACKS****SPLITS**
 
+    // Requirement for Live Location
     packagingOptions {
         pickFirst('META-INF/okio.kotlin_module')
         pickFirst('META-INF/kotlinx_coroutines_core.version')
     }
+    // Requirement for Live Location
 
 **BUILT_APK_LOCATION**
     bundle {
