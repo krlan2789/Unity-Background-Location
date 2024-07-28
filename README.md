@@ -1,6 +1,11 @@
 # Unity Background Location
 
-Background Location Example Project
+Background location sample project using LAN LiveLocation plugin.
+
+## **Supported Platform**
+
+- Android OS *(Tested on Android 10 and Android 14 devices)*
+- iOS *(Coming soon)*
 
 ## **Requirements and Installation**
 
