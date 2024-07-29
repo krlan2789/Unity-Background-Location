@@ -17,11 +17,24 @@ namespace LAN.LiveLocation.Samples {
 
         private void Start() {
             liveLocation.OnLocationFound += UpdateLocation;
-            liveLocation.Setup(webSocketURL, "");
         }
 
         public void StartService() {
-            liveLocation.StartService();
+            bool isDebugModeOn = false;
+
+#if !UNITY_EDITOR && UNITY_ANDROID
+            isDebugModeOn = UnityActivityJavaClass.IsDebuggingModeEnabled;
+#endif
+
+            if (!isDebugModeOn)
+            {
+                liveLocation.Setup(webSocketURL, "{}");
+                liveLocation.StartService();
+            }
+            else
+            {
+                locationText.text = "Debugging mode is enabled! Disable it and try again.";
+            }
         }
 
         public void StopService() {

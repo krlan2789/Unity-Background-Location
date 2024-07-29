@@ -22,8 +22,9 @@ namespace LAN.Android
         public static readonly AndroidJavaClass VERSION_INFO_CLASS = new("android.os.Build$VERSION");
         public static readonly AndroidJavaClass UNITY_PLAYER_CLASS = new("com.unity3d.player.UnityPlayer");
         public static readonly AndroidJavaClass PACKAGE_MANAGER_CLASS = new("android.content.pm.PackageManager");
-        //public static readonly AndroidJavaClass ACTIVITY_RESULT_LAUNCHER_CLASS = new("androidx.activity.result.ActivityResultLauncher");
-        //public static readonly AndroidJavaClass ACTIVITY_RESULT_CONTRACTS_CLASS = new("androidx.activity.result.contract.ActivityResultContracts");
+        //public static readonly AndroidJavaClass SETTINGS_CLASS = new("android.provider.Settings");
+        //public static readonly AndroidJavaClass SETTINGS_SECURE_CLASS = new("android.provider.Settings$Secure");
+        public static readonly AndroidJavaClass SETTINGS_GLOBAL_CLASS = new("android.provider.Settings$Global");
 
         public static readonly string INTENT_CLASS_PATH = "android.content.Intent";
         public static readonly string COMPONENT_NAME_CLASS_PATH = "android.content.ComponentName";
@@ -64,6 +65,18 @@ namespace LAN.Android
         public static string PackageName {
             get {
                 return CurrentActivity.Call<string>("getPackageName");
+            }
+        }
+
+        public static bool IsDebuggingModeEnabled
+        {
+            get
+            {
+                // Check if developer options are enabled
+                bool status = SETTINGS_GLOBAL_CLASS.CallStatic<int>("getInt", CurrentActivity.Call<AndroidJavaObject>("getContentResolver"), "adb_enabled", 0) == 1;
+
+                Debug.Log($"Developer options are {(status ? "enabled" : "disabled")}!");
+                return status;
             }
         }
 
@@ -141,33 +154,6 @@ namespace LAN.Android
 
             Debug.LogWarning("GPS service disabled by user");
         }
-
-        //public static void RequestPermissions(string[] permissions)
-        //{
-        //    if (Application.isFocused)
-        //    {
-        //        //CurrentActivity.Call(REQUEST_PERMISSIONS_METHOD, permissions, 201);
-
-        //        AndroidJavaObject perms = new("java.util.HashMap");
-        //        foreach (var item in permissions)
-        //        {
-        //            perms.Call<AndroidJavaObject>("put", item, false);
-        //        }
-        //        AndroidJavaObject resultContract = ACTIVITY_RESULT_CONTRACTS_CLASS.CallStatic<AndroidJavaObject>("RequestMultiplePermissions");
-        //        var launcher = CurrentActivity.Call<AndroidJavaObject>("registerForActivityResult", resultContract);
-
-        //        launcher.Call("launch", perms);
-        //    }
-        //}
-
-        //public static void ShowToast(string message)
-        //{
-        //    CurrentActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
-        //    {
-        //        AndroidJavaObject toast = new AndroidJavaClass("android.widget.Toast").CallStatic<AndroidJavaObject>("makeText", CurrentActivity, message, 0);
-        //        toast.Call("show");
-        //    }));
-        //}
 #endif
     }
 }

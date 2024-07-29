@@ -1,22 +1,21 @@
 {
-    "name": "com.lan.live-location",
-    "version": "1.0.1",
-    "displayName": "Live Location",
-    "description": "A plugin that allow unity (Android) to run a background service location",
-    "unity": "2020.3",
-    "dependencies": {},
-    "documentationUrl": "https://github.com/krlan2789/Unity-Background-Location/blob/main/README.md",
-    "keywords": [
-        "android",
-        "mobile",
-        "background service",
-        "live location",
-        "background location",
-        "gps"
-    ],
-    "author": {
-        "name": "Erlan Kurnia",
-        "email": "erlank2789@gmail.com",
-        "url": "https://erlankurnia.github.io"
-    }
+  "name": "com.lan.live-location",
+  "version": "1.1.0",
+  "displayName": "Live Location",
+  "description": "A plugin that allow unity (Android) to run a background service location",
+  "unity": "2020.3",
+  "documentationUrl": "https://github.com/krlan2789/Unity-Background-Location/blob/main/README.md",
+  "keywords": [
+    "android",
+    "mobile",
+    "background service",
+    "live location",
+    "background location",
+    "gps"
+  ],
+  "author": {
+    "name": "Erlan Kurnia",
+    "email": "erlank2789@gmail.com",
+    "url": "https://erlankurnia.github.io"
+  }
 }
