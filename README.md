@@ -105,7 +105,6 @@ Background location sample project using LAN LiveLocation plugin.
     ```
 
 <br>
-<br>
 
 ## **Error When Some Build Settings Do Not Match**
 
@@ -114,8 +113,6 @@ Background location sample project using LAN LiveLocation plugin.
     <img class="use-github-assets" src="./Screenshot/Error_gradleproperties_unchecked_popup.png" height="auto" width="640px" />
     
     <img class="use-github-assets" src="./Screenshot/Error_gradleproperties_unchecked.png" height="auto" width="640px" />
-
-<br>
 
 2. `Custom Launcher Gradle` and `Custom Main Gradle` :
 
