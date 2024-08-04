@@ -113,8 +113,6 @@ Background location sample project using LAN LiveLocation plugin.
 
     <img class="use-github-assets" src="./Screenshot/Error_gradleproperties_unchecked_popup.png" height="auto" width="640px" />
     
-    <br/>
-    
     <img class="use-github-assets" src="./Screenshot/Error_gradleproperties_unchecked.png" height="auto" width="640px" />
 
 <br>
@@ -122,8 +120,6 @@ Background location sample project using LAN LiveLocation plugin.
 2. `Custom Launcher Gradle` and `Custom Main Gradle` :
 
     <img class="use-github-assets" src="./Screenshot/Error_manifestgradle_unchecked_popup.png" height="auto" width="640px" />
-    
-    <br/>
     
     <img class="use-github-assets" src="./Screenshot/Error_manifestgradle_unchecked.png" height="auto" width="640px" />
 
