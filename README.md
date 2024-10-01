@@ -18,7 +18,10 @@ Background location sample project using LAN LiveLocation plugin.
 
     - Open the Package Manager Window.
     - Click the add button in the Package Manager's toolbar.
+    - Choose 'Add package from git url'.
     - Copy and paste `https://github.com/krlan2789/Unity-LAN-LiveLocation-Plugin.git` into the textbox, then enter.
+
+    <img class="use-github-assets" src="./Screenshot/Add_package_from_git_url.png" height="auto" width="640px" />
 
 3. Make sure minimum API Level set to `API Level 26` :
 
