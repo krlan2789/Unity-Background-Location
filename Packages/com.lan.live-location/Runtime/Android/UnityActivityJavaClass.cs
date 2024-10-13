@@ -7,17 +7,17 @@ namespace LAN.Android
 {
     public struct Settings
     {
-#if UNITY_ANDROID && !UNITY_EDITOR
+//#if UNITY_ANDROID && !UNITY_EDITOR
         public static readonly string IGNORE_BATTERY_OPTIMIZATION_SETTINGS = "android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS";
         public static readonly string APPLICATION_DETAILS_SETTINGS = "android.settings.APPLICATION_DETAILS_SETTINGS";
         public static readonly string LOCATION_SOURCE_SETTINGS = "android.settings.LOCATION_SOURCE_SETTINGS";
         public static readonly string MANAGE_OVERLAY_PERMISSION = "android.settings.action.MANAGE_OVERLAY_PERMISSION";
-#endif
+//#endif
     }
 
     public static class UnityActivityJavaClass
     {
-#if UNITY_ANDROID && !UNITY_EDITOR
+//#if UNITY_ANDROID && !UNITY_EDITOR
         public static readonly AndroidJavaClass URI_CLASS = new("android.net.Uri");
         public static readonly AndroidJavaClass VERSION_INFO_CLASS = new("android.os.Build$VERSION");
         public static readonly AndroidJavaClass UNITY_PLAYER_CLASS = new("com.unity3d.player.UnityPlayer");
@@ -74,6 +74,18 @@ namespace LAN.Android
             {
                 // Check if developer options are enabled
                 bool status = SETTINGS_GLOBAL_CLASS.CallStatic<int>("getInt", CurrentActivity.Call<AndroidJavaObject>("getContentResolver"), "adb_enabled", 0) == 1;
+
+                Debug.Log($"USB Debugging is {(status ? "enabled" : "disabled")}!");
+                return status;
+            }
+        }
+
+        public static bool IsDevOptionsEnabled
+        {
+            get
+            {
+                // Check if developer options are enabled
+                bool status = SETTINGS_GLOBAL_CLASS.CallStatic<int>("getInt", CurrentActivity.Call<AndroidJavaObject>("getContentResolver"), "development_settings_enabled", 0) == 1;
 
                 Debug.Log($"Developer options are {(status ? "enabled" : "disabled")}!");
                 return status;
@@ -154,6 +166,6 @@ namespace LAN.Android
 
             Debug.LogWarning("GPS service disabled by user");
         }
-#endif
+//#endif
     }
 }

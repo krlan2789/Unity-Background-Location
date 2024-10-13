@@ -24,6 +24,7 @@ namespace LAN.LiveLocation.Samples {
 
 #if !UNITY_EDITOR && UNITY_ANDROID
             isDebugModeOn = UnityActivityJavaClass.IsDebuggingModeEnabled;
+            isDebugModeOn = isDebugModeOn || UnityActivityJavaClass.IsDevOptionsEnabled;
 #endif
 
             if (!isDebugModeOn)
