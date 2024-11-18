@@ -22,9 +22,12 @@ namespace LAN.LiveLocation.Samples {
         public void StartService() {
             bool isDebugModeOn = false;
 
-#if !UNITY_EDITOR && UNITY_ANDROID
-            isDebugModeOn = UnityActivityJavaClass.IsDebuggingModeEnabled;
-            isDebugModeOn = isDebugModeOn || UnityActivityJavaClass.IsDevOptionsEnabled;
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                isDebugModeOn = UnityActivityJavaClass.IsDebuggingModeEnabled;
+                isDebugModeOn = isDebugModeOn || UnityActivityJavaClass.IsDevOptionsEnabled;
+            }
 #endif
 
             if (!isDebugModeOn)
@@ -44,20 +47,27 @@ namespace LAN.LiveLocation.Samples {
 
         public void RequestPermission()
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
-            if (!LiveLocation.HasPermission)
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
             {
-                Debug.Log("Has no Permission!");
-                LiveLocationProvider.RequestPermissions(LiveLocationProvider.RequiredPermissions);
+                if (!LiveLocation.HasPermission)
+                {
+                    Debug.Log("Has no Permission!");
+                    LiveLocationProvider.RequestPermissions(LiveLocationProvider.RequiredPermissions);
+                }
+                else Debug.Log("Has Permission!");
             }
-            else Debug.Log("Has Permission!");
 #endif
         }
 
         public void OptimizeBatteryUsage()
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
-            BatteryOptimization.OpenSetting();
+#if UNITY_ANDROID
+
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                BatteryOptimization.OpenSetting();
+            }
 #endif
         }
 

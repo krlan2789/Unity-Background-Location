@@ -28,8 +28,12 @@ namespace LAN.LiveLocation
         {
             get
             {
-#if UNITY_ANDROID && !UNITY_EDITOR
-                return LiveLocationProvider.HasPermission;
+#if UNITY_ANDROID
+                if (Application.platform == RuntimePlatform.Android)
+                {
+                    return LiveLocationProvider.HasPermission;
+                }
+                return false;
 #else
                 return Input.location.isEnabledByUser;
 #endif
@@ -57,40 +61,43 @@ namespace LAN.LiveLocation
             if (!string.IsNullOrEmpty(apiUrl)) this.apiUrl = apiUrl;
             if (!string.IsNullOrEmpty(messageDecriptor)) MessageDecriptor = messageDecriptor;
 
-#if UNITY_ANDROID && !UNITY_EDITOR
-            void callback(bool status) {
-                if (!IsInitialized && status) {
-                    //bool prevStatus = false;
-                    if (LiveLocationProvider.Status != LiveLocationStatus.RUNNING) {
-                        //  Initialize Live Location
-                        Debug.Log("Setting up LiveLocationProvider");
-                        LiveLocationProvider.Setup();
-                        LiveLocationProvider.SetupURL(this.apiUrl, networkMethod);
-                        LiveLocationProvider.ClearHeader();
-                        LiveLocationProvider.AddHeader("Authentication", "encrypted_string_api_key");
-                        LiveLocationProvider.SetMessageDescriptor(MessageDecriptor);
-                        IsInitialized = true;
-                        //if (prevStatus) 
-                        StartService();
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                void callback(bool status) {
+                    if (!IsInitialized && status) {
+                        //bool prevStatus = false;
+                        if (LiveLocationProvider.Status != LiveLocationStatus.RUNNING) {
+                            //  Initialize Live Location
+                            Debug.Log("Setting up LiveLocationProvider");
+                            LiveLocationProvider.Setup();
+                            LiveLocationProvider.SetupURL(this.apiUrl, networkMethod);
+                            LiveLocationProvider.ClearHeader();
+                            LiveLocationProvider.AddHeader("Authentication", "encrypted_string_api_key");
+                            LiveLocationProvider.SetMessageDescriptor(MessageDecriptor);
+                            IsInitialized = true;
+                            //if (prevStatus) 
+                            StartService();
+                        }
+                        else
+                        {
+                            //prevStatus = true;
+                            //StopService();
+                        }
                     }
                     else
                     {
-                        //prevStatus = true;
-                        //StopService();
+                        if (LiveLocationProvider.Status != LiveLocationStatus.RUNNING) StopService();
                     }
-                }
-                else
-                {
-                    if (LiveLocationProvider.Status != LiveLocationStatus.RUNNING) StopService();
-                }
                 
-                if (IsInitialized && status) Debug.LogWarning("LiveLocation is setted up!");
-            }
+                    if (IsInitialized && status) Debug.LogWarning("LiveLocation is setted up!");
+                }
 
-            BatteryOptimization.Setup();
-            if (!HasPermission) RequestPermission(callback);
-            else if (!Input.location.isEnabledByUser) ActivateGPS(callback);
-            else callback(true);
+                BatteryOptimization.Setup();
+                if (!HasPermission) RequestPermission(callback);
+                else if (!Input.location.isEnabledByUser) ActivateGPS(callback);
+                else callback(true);
+            }
 #else
             IsInitialized = HasPermission;
 #endif
@@ -104,14 +111,17 @@ namespace LAN.LiveLocation
         protected virtual IEnumerator RequestingPremission(Action<bool> callback)
         {
             Debug.Log("Requesting permissions!");
-#if UNITY_ANDROID && !UNITY_EDITOR
-            LiveLocationProvider.RequestPermissions(LiveLocationProvider.RequiredPermissions);
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                LiveLocationProvider.RequestPermissions(LiveLocationProvider.RequiredPermissions);
 
-            //  Initializing
-            int maxWait = 20;
-            while (!HasPermission && maxWait > 0) {
-                yield return new WaitForSecondsRealtime(1);
-                maxWait--;
+                //  Initializing
+                int maxWait = 20;
+                while (!HasPermission && maxWait > 0) {
+                    yield return new WaitForSecondsRealtime(1);
+                    maxWait--;
+                }
             }
 #endif
             Debug.Log($"Permission {(HasPermission ? "granted" : "denied")}!");
@@ -128,8 +138,11 @@ namespace LAN.LiveLocation
             Debug.Log("Activating GPS Services");
             if (!Input.location.isEnabledByUser)
             {
-#if UNITY_ANDROID && !UNITY_EDITOR
-                UnityActivityJavaClass.OpenGPSSetting();
+#if UNITY_ANDROID
+                if (Application.platform == RuntimePlatform.Android)
+                {
+                    UnityActivityJavaClass.OpenGPSSetting();
+                }
 #endif
             } else
             {
@@ -141,8 +154,11 @@ namespace LAN.LiveLocation
 
         public virtual void OpenGPSSetting()
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
-            UnityActivityJavaClass.OpenGPSSetting();
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                UnityActivityJavaClass.OpenGPSSetting();
+            }
 #endif
         }
 
@@ -152,18 +168,21 @@ namespace LAN.LiveLocation
         public virtual LiveLocation IgnoreBatteryOptimizations(Action<bool> callback = null)
         {
             Debug.Log("Activating GPS Services");
-#if UNITY_ANDROID && !UNITY_EDITOR
-            if (!BatteryOptimization.IsIgnoringBatteryOptimizations) {
-                Debug.LogWarning("Battery optimization enabled by user");
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                if (!BatteryOptimization.IsIgnoringBatteryOptimizations) {
+                    Debug.LogWarning("Battery optimization enabled by user");
 
-                try {
-                    BatteryOptimization.OpenSetting();
-                } catch (Exception e) {
-                    Debug.LogError(e.Message);
+                    try {
+                        BatteryOptimization.OpenSetting();
+                    } catch (Exception e) {
+                        Debug.LogError(e.Message);
+                    }
+                } else {
+                    Debug.Log("Battery optimization excluded by user");
+                    callback?.Invoke(true);
                 }
-            } else {
-                Debug.Log("Battery optimization excluded by user");
-                callback?.Invoke(true);
             }
 #else
             Debug.Log("Battery optimization excluded by user");
@@ -182,19 +201,22 @@ namespace LAN.LiveLocation
         {
             //  Start service
             Debug.Log("Starting location services");
-#if UNITY_ANDROID && !UNITY_EDITOR
-            //Debug.Log("LiveLocationProvider.Status: " + LiveLocationProvider.Status);
-            if (LiveLocationProvider.Status == LiveLocationStatus.RUNNING) {
-                Debug.LogWarning("LiveLocation service is already running");
-            } else {
-                LiveLocationProvider.Start();
-                IsRunning = true;
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                //Debug.Log("LiveLocationProvider.Status: " + LiveLocationProvider.Status);
+                if (LiveLocationProvider.Status == LiveLocationStatus.RUNNING) {
+                    Debug.LogWarning("LiveLocation service is already running");
+                } else {
+                    LiveLocationProvider.Start();
+                    IsRunning = true;
 
-                if (!IsUpdatingLocation) {
-                    //  Call UpdateLocation method every second
-                    InvokeRepeating(nameof(UpdateLocation), .75f, 1f);
+                    if (!IsUpdatingLocation) {
+                        //  Call UpdateLocation method every second
+                        InvokeRepeating(nameof(UpdateLocation), .75f, 1f);
+                    }
+                    yield break;
                 }
-                yield break;
             }
 #else
             //  Start service
@@ -240,8 +262,11 @@ namespace LAN.LiveLocation
             OnLocationFound = null;
             IsRunning = false;
             CancelInvoke(nameof(UpdateLocation));
-#if UNITY_ANDROID && !UNITY_EDITOR
-            LiveLocationProvider.Stop();
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                LiveLocationProvider.Stop();
+            }
 #else
             if (Input.location.status == LocationServiceStatus.Running) Input.location.Stop();
 #endif
@@ -254,18 +279,21 @@ namespace LAN.LiveLocation
         public virtual void UpdateLocation()
         {
             IsUpdatingLocation = true;
-#if UNITY_ANDROID && !UNITY_EDITOR
-            if (HasPermission && IsRunning) {
-                //  Access granted and it has been initialized
-                LastLocation = LiveLocationProvider.LastLocation;
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                if (HasPermission && IsRunning) {
+                    //  Access granted and it has been initialized
+                    LastLocation = LiveLocationProvider.LastLocation;
 
-                //DateTime after = DateTime.Now;
-                //TimeSpan duration = after.Subtract(searchDuration);
+                    //DateTime after = DateTime.Now;
+                    //TimeSpan duration = after.Subtract(searchDuration);
 
-                Debug.LogWarning(JsonUtility.ToJson(LastLocation));
-                OnLocationFound?.Invoke(LiveLocationProvider.ErrorMessage, LastLocation);
-            } else {
-                OnLocationFound?.Invoke("Failed to get access or permission location", Location.Default);
+                    Debug.LogWarning(JsonUtility.ToJson(LastLocation));
+                    OnLocationFound?.Invoke(LiveLocationProvider.ErrorMessage, LastLocation);
+                } else {
+                    OnLocationFound?.Invoke("Failed to get access or permission location", Location.Default);
+                }
             }
 #else
             if (HasPermission && Input.location.isEnabledByUser)

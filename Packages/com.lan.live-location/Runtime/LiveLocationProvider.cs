@@ -20,7 +20,7 @@ namespace LAN.LiveLocation
 
     public class LiveLocationProvider
     {
-#if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID
         private static AndroidJavaObject alienPortalInstance;
 
         private static readonly string[] requiredPermissions = new string[] {
@@ -40,11 +40,14 @@ namespace LAN.LiveLocation
             {
                 var list = new List<string>();
 
-#if UNITY_ANDROID && !UNITY_EDITOR
-                foreach (string perm in requiredPermissions)
+#if UNITY_ANDROID
+                if (Application.platform == RuntimePlatform.Android)
                 {
-                    //if (AndroidSdkVersion < 29 && perm == "android.permission.FOREGROUND_SERVICE_LOCATION") continue;
-                    list.Add(perm);
+                    foreach (string perm in requiredPermissions)
+                    {
+                        //if (AndroidSdkVersion < 29 && perm == "android.permission.FOREGROUND_SERVICE_LOCATION") continue;
+                        list.Add(perm);
+                    }
                 }
 #endif
 
@@ -56,12 +59,15 @@ namespace LAN.LiveLocation
         {
             get
             {
-#if UNITY_ANDROID && !UNITY_EDITOR
-                foreach (string perm in requiredPermissions) {
-                    //if (AndroidSdkVersion < 29 && perm == "android.permission.FOREGROUND_SERVICE_LOCATION") continue;
-                    bool status = Permission.HasUserAuthorizedPermission(perm);
-                    //Debug.Log($"{perm} is {(status ? "allowed" : "denied")}");
-                    if (!status) return false;
+#if UNITY_ANDROID
+                if (Application.platform == RuntimePlatform.Android)
+                {
+                    foreach (string perm in requiredPermissions) {
+                        //if (AndroidSdkVersion < 29 && perm == "android.permission.FOREGROUND_SERVICE_LOCATION") continue;
+                        bool status = Permission.HasUserAuthorizedPermission(perm);
+                        //Debug.Log($"{perm} is {(status ? "allowed" : "denied")}");
+                        if (!status) return false;
+                    }
                 }
 #endif
                 return true;
@@ -75,10 +81,14 @@ namespace LAN.LiveLocation
         {
             get
             {
-#if UNITY_ANDROID && !UNITY_EDITOR
-                if (alienPortalInstance == null) return LiveLocationStatus.DEAD;
-                string _status = alienPortalInstance.Call<string>("getStatus").ToUpper();
-                return _status == "RUNNING" ? LiveLocationStatus.RUNNING : LiveLocationStatus.DEAD;
+#if UNITY_ANDROID
+                if (Application.platform == RuntimePlatform.Android)
+                {
+                    if (alienPortalInstance == null) return LiveLocationStatus.DEAD;
+                    string _status = alienPortalInstance.Call<string>("getStatus").ToUpper();
+                    return _status == "RUNNING" ? LiveLocationStatus.RUNNING : LiveLocationStatus.DEAD;
+                }
+                return LiveLocationStatus.DEAD;
 #else
                 return LiveLocationStatus.RUNNING;
 #endif
@@ -92,9 +102,13 @@ namespace LAN.LiveLocation
         {
             get
             {
-#if UNITY_ANDROID && !UNITY_EDITOR
-                if (alienPortalInstance == null) return "";
-                return alienPortalInstance.Call<string>("getErrorMessage");
+#if UNITY_ANDROID
+                if (Application.platform == RuntimePlatform.Android)
+                {
+                    if (alienPortalInstance == null) return "";
+                    return alienPortalInstance.Call<string>("getErrorMessage");
+                }
+                return "";
 #else
                 return "";
 #endif
@@ -105,10 +119,14 @@ namespace LAN.LiveLocation
         {
             get
             {
-#if UNITY_ANDROID && !UNITY_EDITOR
-                if (alienPortalInstance == null) return 0;
-                string val = alienPortalInstance.Call<string>("getLatitude");
-                return ToDoubleExact(val);
+#if UNITY_ANDROID
+                if (Application.platform == RuntimePlatform.Android)
+                {
+                    if (alienPortalInstance == null) return 0;
+                    string val = alienPortalInstance.Call<string>("getLatitude");
+                    return ToDoubleExact(val);
+                }
+                return 0;
 #else
                 return 0;
 #endif
@@ -119,10 +137,14 @@ namespace LAN.LiveLocation
         {
             get
             {
-#if UNITY_ANDROID && !UNITY_EDITOR
-                if (alienPortalInstance == null) return 0;
-                string val = alienPortalInstance.Call<string>("getLongitude");
-                return ToDoubleExact(val);
+#if UNITY_ANDROID
+                if (Application.platform == RuntimePlatform.Android)
+                {
+                    if (alienPortalInstance == null) return 0;
+                    string val = alienPortalInstance.Call<string>("getLongitude");
+                    return ToDoubleExact(val);
+                }
+                return 0;
 #else
                 return 0;
 #endif
@@ -133,10 +155,14 @@ namespace LAN.LiveLocation
         {
             get
             {
-#if UNITY_ANDROID && !UNITY_EDITOR
-                if (alienPortalInstance == null) return 0;
-                string val = alienPortalInstance.Call<string>("getAccuracy");
-                return ToFloatExact(val);
+#if UNITY_ANDROID
+                if (Application.platform == RuntimePlatform.Android)
+                {
+                    if (alienPortalInstance == null) return 0;
+                    string val = alienPortalInstance.Call<string>("getAccuracy");
+                    return ToFloatExact(val);
+                }
+                return 0;
 #else
                 return 0;
 #endif
@@ -147,11 +173,15 @@ namespace LAN.LiveLocation
         {
             get
             {
-#if UNITY_ANDROID && !UNITY_EDITOR
-                if (alienPortalInstance == null) return DateTime.Now;
-                string val = alienPortalInstance.Call<string>("getUpdatedTime");
-                if (string.IsNullOrEmpty(val)) return DateTime.Now;
-                return new DateTime(long.Parse(val));
+#if UNITY_ANDROID
+                if (Application.platform == RuntimePlatform.Android)
+                {
+                    if (alienPortalInstance == null) return DateTime.Now;
+                    string val = alienPortalInstance.Call<string>("getUpdatedTime");
+                    if (string.IsNullOrEmpty(val)) return DateTime.Now;
+                    return new DateTime(long.Parse(val));
+                }
+                return DateTime.Now;
 #else
                 return DateTime.Now;
 #endif
@@ -165,11 +195,15 @@ namespace LAN.LiveLocation
         {
             get
             {
-#if UNITY_ANDROID && !UNITY_EDITOR
-                if (alienPortalInstance == null) return Location.Default;
-                return new Location() {
-                    accuracy = Accuracy, latitude = Latitude, longitude = Longitude, updateTime = UpdatedTime
-                };
+#if UNITY_ANDROID
+                if (Application.platform == RuntimePlatform.Android)
+                {
+                    if (alienPortalInstance == null) return Location.Default;
+                    return new Location() {
+                        accuracy = Accuracy, latitude = Latitude, longitude = Longitude, updateTime = UpdatedTime
+                    };
+                }
+                return Location.Default;
 #else
                 return Location.Default;
 #endif
@@ -180,9 +214,13 @@ namespace LAN.LiveLocation
         {
             get
             {
-#if UNITY_ANDROID && !UNITY_EDITOR
-                var versionInfo = new AndroidJavaClass("android.os.Build$VERSION");
-                return versionInfo.GetStatic<int>("SDK_INT");
+#if UNITY_ANDROID
+                if (Application.platform == RuntimePlatform.Android)
+                {
+                    var versionInfo = new AndroidJavaClass("android.os.Build$VERSION");
+                    return versionInfo.GetStatic<int>("SDK_INT");
+                }
+                return 0;
 #else
                 return 0;
 #endif
@@ -194,14 +232,17 @@ namespace LAN.LiveLocation
         /// </summary>
         public static void Setup()
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
-            AndroidJavaClass alienPortalClass = new("com.singularity_code.live_location.util.other.AlienPortal");
-            alienPortalInstance = alienPortalClass.CallStatic<AndroidJavaObject>("newInstance");
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                AndroidJavaClass alienPortalClass = new("com.singularity_code.live_location.util.other.AlienPortal");
+                alienPortalInstance = alienPortalClass.CallStatic<AndroidJavaObject>("newInstance");
 
-            SetContext();
-            SetGPSSamplingRate();
-            SetupChannel();
-            SetupNotification();
+                SetContext();
+                SetGPSSamplingRate();
+                SetupChannel();
+                SetupNotification();
+            }
 #endif
             Debug.Log("Setup service");
         }
@@ -248,104 +289,143 @@ namespace LAN.LiveLocation
 
         public static void SetGPSSamplingRate(long samplingRate = 5000)
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
-            if (alienPortalInstance == null) return;
-            alienPortalInstance.Call("setGPSSamplingRate", samplingRate);
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                if (alienPortalInstance == null) return;
+                alienPortalInstance.Call("setGPSSamplingRate", samplingRate);
+            }
 #endif
         }
 
         public static void SetContext()
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
-            if (alienPortalInstance == null) return;
-            alienPortalInstance.Call("setContext", UnityActivityJavaClass.CurrentActivity);
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                if (alienPortalInstance == null) return;
+                alienPortalInstance.Call("setContext", UnityActivityJavaClass.CurrentActivity);
+            }
 #endif
         }
 
         public static void SetChannelId(string id)
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
-            if (alienPortalInstance == null) return;
-            alienPortalInstance.Call("setChannelId", id);
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                if (alienPortalInstance == null) return;
+                alienPortalInstance.Call("setChannelId", id);
+            }
 #endif
         }
 
         public static void SetChannelName(string name)
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
-            if (alienPortalInstance == null) return;
-            alienPortalInstance.Call("setChannelName", name);
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                if (alienPortalInstance == null) return;
+                alienPortalInstance.Call("setChannelName", name);
+            }
 #endif
         }
 
         public static void SetChannelDescription(string description)
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
-            if (alienPortalInstance == null) return;
-            alienPortalInstance.Call("setChannelDescription", description);
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                if (alienPortalInstance == null) return;
+                alienPortalInstance.Call("setChannelDescription", description);
+            }
 #endif
         }
 
         public static void SetupAPIorSocketURL(string url)
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
-            if (alienPortalInstance == null) return;
-            alienPortalInstance.Call("setupAPIorSocketURL", url);
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                if (alienPortalInstance == null) return;
+                alienPortalInstance.Call("setupAPIorSocketURL", url);
+            }
 #endif
         }
 
         public static void SetNotificationTitle(string title)
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
-            if (alienPortalInstance == null) return;
-            alienPortalInstance.Call("setNotificationTitle", title);
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                if (alienPortalInstance == null) return;
+                alienPortalInstance.Call("setNotificationTitle", title);
+            }
 #endif
         }
 
         public static void SetNotificationMessage(string message)
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
-            if (alienPortalInstance == null) return;
-            alienPortalInstance.Call("setNotificationMessage", message);
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                if (alienPortalInstance == null) return;
+                alienPortalInstance.Call("setNotificationMessage", message);
+            }
 #endif
         }
 
         public static void SetupNetworkMethod(NetworkMethod methodEnumIndex)
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
-            if (alienPortalInstance == null) return;
-            alienPortalInstance.Call("setupNetworkMethod", (int)methodEnumIndex);
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                if (alienPortalInstance == null) return;
+                alienPortalInstance.Call("setupNetworkMethod", (int)methodEnumIndex);
+            }
 #endif
         }
 
         public static void AddHeader(string key, string value)
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
-            if (alienPortalInstance == null) return;
-            alienPortalInstance.Call("addHeader", key, value);
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                if (alienPortalInstance == null) return;
+                alienPortalInstance.Call("addHeader", key, value);
+            }
 #endif
         }
 
         public static void ClearHeader()
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
-            if (alienPortalInstance == null) return;
-            alienPortalInstance.Call("clearHeader");
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                if (alienPortalInstance == null) return;
+                alienPortalInstance.Call("clearHeader");
+            }
 #endif
         }
 
         public static void SetMessageDescriptor(string descriptor)
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
-            if (alienPortalInstance == null) return;
-            alienPortalInstance.Call("setMessageDescriptor", descriptor);
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                if (alienPortalInstance == null) return;
+                alienPortalInstance.Call("setMessageDescriptor", descriptor);
+            }
 #endif
         }
 
         public static void RequestPermissions(string[] permissions)
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
-            Permission.RequestUserPermissions(RequiredPermissions);
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                Permission.RequestUserPermissions(RequiredPermissions);
+            }
 #endif
             //if (AndroidSdkVersion > 33)
             //{
@@ -365,9 +445,12 @@ namespace LAN.LiveLocation
         public static void Start()
         {
             Debug.Log("Start service");
-#if UNITY_ANDROID && !UNITY_EDITOR
-            if (alienPortalInstance == null) return;
-            alienPortalInstance.Call("start");
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                if (alienPortalInstance == null) return;
+                alienPortalInstance.Call("start");
+            }
 #endif
         }
 
@@ -378,9 +461,12 @@ namespace LAN.LiveLocation
         public static void Stop()
         {
             Debug.Log("Stop service");
-#if UNITY_ANDROID && !UNITY_EDITOR
-            if (alienPortalInstance == null) return;
-            alienPortalInstance.Call("stop");
+#if UNITY_ANDROID
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                if (alienPortalInstance == null) return;
+                alienPortalInstance.Call("stop");
+            }
 #endif
         }
 
